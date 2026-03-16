@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Paotech</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -500,7 +500,9 @@ function sortOrdini(arr){return [...arr].sort((a,b)=>{const sd=(STATO_ORDER[a.st
 function renderOrdini(){
   const all=DB.ordini,mine=all.filter(o=>o.categoria===U.name);
   if(oTab==='mine'){
+    const archivCount=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)&&o.categoria===U.name).length;
     return `<div class="tabs"><button class="tab active" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
+    ${archivCount>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivCount})</button>`:''}
     ${sortOrdini(mine).length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine assegnato a te</div>`:sortOrdini(mine).map(o=>ordineCard(o)).join('')}`;
   }
   if(oFolder===null){
@@ -539,8 +541,32 @@ async function archiviaOrdine(id){
   await sb.from('ordini').update({archiviato:now,mese_storico:mk}).eq('id',id);
   await loadAll();
 }
+
+async function archiviaMultipli(){
+  const statiDaArchiviare=['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'];
+  const daArchiviare=DB.ordini.filter(o=>statiDaArchiviare.includes(o.stato));
+  if(!daArchiviare.length){alert('Nessun ordine da archiviare.');return;}
+  if(!confirm(`Archiviare ${daArchiviare.length} ordini (Ordinato, In Attesa, Non Lo Trovo, Avvisare)?`))return;
+  const now=new Date().toISOString(),mk=monthKeyNow();
+  await sb.from('ordini').update({archiviato:now,mese_storico:mk}).in('id',daArchiviare.map(o=>o.id));
+  await loadAll();
+}
 async function delOrdine(id){if(!confirm('Eliminare?'))return;await sb.from('ordini').delete().eq('id',id);await loadAll();}
-function editOrdine(id){
+function editOrdineStorico(id){
+  const o=DB.storOrdini.find(x=>x.id===id);if(!o)return;
+  editOId=id;
+  document.getElementById('o-stato').value=o.stato||'Ordinato';
+  document.getElementById('o-cosa').value=o.cosa||'';
+  document.getElementById('o-cat').value=o.categoria||OPS[0];
+  document.getElementById('o-nome').value=o.nome||'';
+  document.getElementById('o-tel').value=o.tel||'';
+  document.getElementById('o-costo').value=o.costo||'';
+  document.getElementById('o-acconto').value=o.acconto||'';
+  document.getElementById('o-arrivo').value=o.arrivo||'';
+  document.getElementById('o-note').value=o.note||'';
+  document.getElementById('modalOrdineTitle').textContent='Modifica Ordine (Storico)';
+  document.getElementById('modalOrdine').classList.add('open');
+}
   const o=DB.ordini.find(x=>x.id===id);if(!o)return;editOId=id;
   document.getElementById('o-stato').value=o.stato||'Da Ordinare';
   document.getElementById('o-cosa').value=o.cosa||'';
@@ -686,7 +712,10 @@ function renderStorico(){
               ${isOrdine&&item.costo?`<div class="card-sub">💶 €${item.costo}${item.acconto?` · Acc: €${item.acconto}`:''}</div>`:''}
               ${!isOrdine&&item.euro?`<div class="card-sub">💶 €${item.euro}</div>`:''}
               ${item.note?`<div class="card-sub">📝 ${esc(String(item.note).substring(0,55))}</div>`:''}
-              ${item.tel?`<div class="card-actions"><button class="action-btn call" onclick="callTel('${item.tel}')">📞</button><button class="action-btn wa" onclick="wa('${item.tel}')">💬</button></div>`:''}
+              <div class="card-actions">
+                ${item.tel?`<button class="action-btn call" onclick="callTel('${item.tel}')">📞</button><button class="action-btn wa" onclick="wa('${item.tel}')">💬</button>`:''}
+                ${isOrdine?`<button class="action-btn" onclick="editOrdineStorico(${item.id})">✏️</button>`:''}
+              </div>
             </div>`;
           }).join('');
         }
