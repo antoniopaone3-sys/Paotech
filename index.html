@@ -10,7 +10,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{--red:#E8344A;--bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;--text:#fff;--sub:#aaa;--border:#3a3a3a;
   --c-ap:#E8344A;--c-gv:#3a7bd5;--c-gd:#27ae60;--c-ad:#8e44ad;}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100vh;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100vh;height:100dvh;overflow:hidden;}
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:20px;}
 #loginScreen h1{font-size:22px;margin-bottom:8px;color:var(--red);}
 #loginScreen .sub{font-size:13px;color:var(--sub);margin-bottom:28px;}
@@ -20,26 +20,25 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .field label{display:block;font-size:11px;color:var(--sub);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:14px;}
 .field textarea{resize:vertical;min-height:70px;}
-.field input[type=file]{padding:8px;}
 .login-err{color:#ff4444;font-size:13px;margin-bottom:12px;display:none;}
 .login-btn{width:100%;background:var(--red);border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
 .pwd-toggle{position:relative;}
 .pwd-toggle input{padding-right:44px;}
 .pwd-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--sub);cursor:pointer;font-size:16px;}
-#app{display:none;flex-direction:column;height:100vh;}
+#app{display:none;flex-direction:column;height:100vh;height:100dvh;}
 .topbar{background:var(--red);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:10px;}
-.logo-small{width:38px;height:38px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--red);}
-.topbar-title{font-size:16px;font-weight:700;}
+.logo-small{width:38px;height:38px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--red);cursor:pointer;}
+.topbar-title{font-size:16px;font-weight:700;cursor:pointer;}
 .topbar-user{font-size:12px;opacity:.8;}
 .icon-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px;}
 .content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
-.bottomnav{background:var(--red);display:flex;padding:8px 0 12px;flex-shrink:0;}
+.bottomnav{background:var(--red);display:flex;padding:8px 0;padding-bottom:calc(12px + env(safe-area-inset-bottom));flex-shrink:0;}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:rgba(255,255,255,.5);font-size:10px;font-weight:800;border:none;background:none;padding:6px 4px;letter-spacing:.5px;text-transform:uppercase;}
 .nav-item.active{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.5);}
 .nav-item.active .nav-icon{transform:scale(1.2);}
-.nav-icon{font-size:22px;transition:transform .15s;}
 .nav-item.active::after{content:'';display:block;width:24px;height:3px;background:#fff;border-radius:2px;margin-top:2px;}
+.nav-icon{font-size:22px;transition:transform .15s;}
 .tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:14px;}
 .tab{flex:1;background:none;border:none;color:var(--sub);padding:10px 6px;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;text-align:center;}
 .tab.active{color:var(--red);border-bottom-color:var(--red);}
@@ -73,6 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .close-btn{background:var(--bg3);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .save-btn{width:100%;background:var(--red);border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;}
+.del-btn{width:100%;background:#ff4444;border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
 .folder-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
 .folder-name{font-weight:700;font-size:14px;}
 .folder-badge{border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:#fff;}
@@ -85,7 +85,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .time-slot{display:flex;align-items:flex-start;gap:10px;padding:3px 0;min-height:38px;border-bottom:1px solid var(--border);}
 .time-label{font-size:11px;color:var(--sub);width:38px;flex-shrink:0;padding-top:6px;}
 .event-block{border-radius:6px;padding:5px 9px;font-size:12px;flex:1;margin-bottom:3px;color:#fff;cursor:pointer;}
-.event-block:hover{opacity:.85;}
 .event-tag{background:rgba(255,255,255,.25);border-radius:4px;padding:1px 5px;font-size:10px;margin-top:2px;display:inline-block;}
 .cal-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .legend-dot{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);}
@@ -105,16 +104,11 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .export-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .export-label{font-size:13px;color:var(--sub);}
 .export-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;}
-.export-btn:hover{border-color:var(--red);color:var(--red);}
 .month-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;}
-.sync-indicator{font-size:10px;color:#4caf50;margin-left:6px;}
-.sync-err{font-size:10px;color:#ff4444;margin-left:6px;}
-.del-btn{width:100%;background:#ff4444;border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div style="font-size:48px;font-weight:900;color:var(--red);letter-spacing:-2px;margin-bottom:6px;">P</div>
   <h1>PAOTECH</h1>
@@ -143,11 +137,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="logo-small" onclick="showSection('home')" style="cursor:pointer;">P</div>
+      <div class="logo-small" onclick="showSection('home')">P</div>
       <div onclick="showSection('home')" style="cursor:pointer;">
         <div class="topbar-title">PAOTECH</div>
         <div class="topbar-user" id="topbarUser"></div>
@@ -155,8 +148,8 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     </div>
     <div style="display:flex;gap:6px;align-items:center;">
       <span id="syncIndicator" style="font-size:10px;opacity:.7;"></span>
-      <button class="icon-btn" title="Cambia password" onclick="openChangePwd()">🔑</button>
-      <button class="icon-btn" title="Logout" onclick="logout()">⏻</button>
+      <button class="icon-btn" onclick="openChangePwd()">🔑</button>
+      <button class="icon-btn" onclick="logout()">⏻</button>
     </div>
   </div>
   <div class="content" id="mainContent"></div>
@@ -170,7 +163,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 <button class="fab" id="fab" onclick="openModal()" style="display:none">+</button>
 
-<!-- MODAL ORDINE -->
 <div class="modal-overlay" id="modalOrdine">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="modalOrdineTitle">Nuovo Ordine</div><button class="close-btn" onclick="closeModal('modalOrdine')">✕</button></div>
@@ -189,7 +181,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
-<!-- MODAL TASK -->
 <div class="modal-overlay" id="modalTask">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="modalTaskTitle">Nuovo Task</div><button class="close-btn" onclick="closeModal('modalTask')">✕</button></div>
@@ -208,59 +199,59 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 const SUPABASE_URL  = 'https://lpepweefewzhyolvojvh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwZXB3ZWVmZXd6aHlvbHZvanZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTA2NzYsImV4cCI6MjA4ODkyNjY3Nn0.DPx-yTvTiW0enedvLkwmlRWrvMn3nj14_ozA3MfPKxc';
 const GCAL_FN_URL   = `${SUPABASE_URL}/functions/v1/google-cal`;
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const OPS=['Antonio Paone','Giuseppe Vaira','Giuseppe De Santis','Andrea De Santis'];
-const OP_DISPLAY=['Antonio','Giuseppe V.','Giuseppe D.','Andrea'];
-const OP_COLORS=['#E8344A','#3a7bd5','#27ae60','#8e44ad'];
-const OP_INITIALS=['AP','GV','GD','AD'];
-const MONTHS=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const OPS = ['Antonio Paone','Giuseppe Vaira','Giuseppe De Santis','Andrea De Santis'];
+const OP_DISPLAY = ['Antonio','Giuseppe V.','Giuseppe D.','Andrea'];
+const OP_COLORS = ['#E8344A','#3a7bd5','#27ae60','#8e44ad'];
+const OP_INITIALS = ['AP','GV','GD','AD'];
+const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
-let U=null;
-let SEC='home';
-let oTab='mine',oFolder=null;
-let tTab='mine',tFolder=null;
-let storicoType='ordini';
-let storOpenFolders={},storOpenMonths={};
-let editOId=null,editTId=null,editEvId=null;
-let calView='day',calDate=new Date();
-let DB={ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
+let U = null;
+let SEC = 'home';
+let oTab = 'mine', oFolder = null;
+let tTab = 'mine', tFolder = null;
+let storicoType = 'ordini';
+let storOpenFolders = {}, storOpenMonths = {};
+let editOId = null, editTId = null, editEvId = null;
+let calView = 'day', calDate = new Date();
+let DB = {ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
 
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const fmtDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-const monthKeyNow=()=>{const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;};
-const monthKey=s=>s?s.substring(0,7):monthKeyNow();
-const monthLabel=mk=>{const[y,m]=mk.split('-');return `${MONTHS[parseInt(m)-1]} ${y}`;};
-const opColor=name=>{const i=OPS.indexOf(name);return i>=0?OP_COLORS[i]:'#666';};
-const wa=tel=>window.open(`https://wa.me/39${tel.replace(/\D/g,'')}`);
-const callTel=tel=>{window.location.href=`tel:+39${tel.replace(/\D/g,'')}`};
-const setSync=(msg,err=false)=>{const el=document.getElementById('syncIndicator');if(el){el.textContent=msg;el.style.color=err?'#ff4444':'#4caf50';}};
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const monthKeyNow = () => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; };
+const monthKey = s => s ? s.substring(0,7) : monthKeyNow();
+const monthLabel = mk => { const[y,m]=mk.split('-'); return `${MONTHS[parseInt(m)-1]} ${y}`; };
+const opColor = name => { const i=OPS.indexOf(name); return i>=0?OP_COLORS[i]:'#666'; };
+const wa = tel => window.open(`https://wa.me/39${tel.replace(/\D/g,'')}`);
+const callTel = tel => { window.location.href=`tel:+39${tel.replace(/\D/g,'')}`; };
+const setSync = (msg,err=false) => { const el=document.getElementById('syncIndicator'); if(el){el.textContent=msg;el.style.color=err?'#ff4444':'#4caf50';} };
 
-function togglePwd(inputId,btn){
-  const el=document.getElementById(inputId);
+function togglePwd(inputId, btn) {
+  const el = document.getElementById(inputId);
   if(el.type==='password'){el.type='text';btn.textContent='🙈';}
   else{el.type='password';btn.textContent='👁';}
 }
 
-async function loadAll(){
+async function loadAll() {
   setSync('⟳ sync...');
   try {
-    const [o,t,e,so,st]=await Promise.all([
+    const [o,t,e,so,st] = await Promise.all([
       sb.from('ordini').select('*').is('archiviato',null).order('id',{ascending:false}),
       sb.from('task').select('*').is('archiviato',null).neq('fase','Chiuso').order('id',{ascending:false}),
       sb.from('eventi').select('*').order('date',{ascending:true}),
       sb.from('ordini').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
       sb.from('task').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
     ]);
-    DB.ordini=o.data||[];DB.task=t.data||[];DB.eventi=e.data||[];
-    DB.storOrdini=so.data||[];DB.storTask=st.data||[];
+    DB.ordini=o.data||[]; DB.task=t.data||[]; DB.eventi=e.data||[];
+    DB.storOrdini=so.data||[]; DB.storTask=st.data||[];
     setSync('✓ sincronizzato');
-    updateBadges();render();
-  } catch(err){setSync('⚠ offline',true);console.error(err);}
+    updateBadges();
+    render();
+  } catch(err) { setSync('⚠ offline',true); console.error(err); }
 }
 
-function setupRealtime(){
+function setupRealtime() {
   sb.channel('paotech-changes')
     .on('postgres_changes',{event:'*',schema:'public',table:'ordini'},()=>loadAll())
     .on('postgres_changes',{event:'*',schema:'public',table:'task'},()=>loadAll())
@@ -268,48 +259,13 @@ function setupRealtime(){
     .subscribe();
 }
 
-async function callGCal(payload){
+async function callGCal(payload) {
   try {
-    await fetch(GCAL_FN_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON}`},
-      body:JSON.stringify(payload)
-    });
-  } catch(e){console.warn('GCal non disponibile:',e);}
+    await fetch(GCAL_FN_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON}`},body:JSON.stringify(payload)});
+  } catch(e) { console.warn('GCal non disponibile:',e); }
 }
 
-async function doLogin(){
-  const name=document.getElementById('loginUser').value;
-  const pwd=document.getElementById('loginPwd').value;
-  const err=document.getElementById('loginErr');
-  const btn=document.getElementById('loginBtnEl');
-  if(!name||!pwd){err.style.display='block';err.textContent='❌ Seleziona operatore e inserisci la password';return;}
-  btn.textContent='Accesso...';btn.disabled=true;
-  try {
-    const {data,error}=await sb.from('passwords').select('pwd_hash').eq('operatore',name).single();
-    if(error||!data){err.style.display='block';err.textContent='❌ Errore di connessione';btn.textContent='Accedi';btn.disabled=false;return;}
-    if(pwd!==data.pwd_hash){err.style.display='block';err.textContent='❌ Password errata';btn.textContent='Accedi';btn.disabled=false;return;}
-  } catch(e){
-    const stored=localStorage.getItem('pt_pwd_'+name)||{'Antonio Paone':'pao2024','Giuseppe Vaira':'vaira2024','Giuseppe De Santis':'gdesantis2024','Andrea De Santis':'adesantis2024'}[name]||'';
-    if(pwd!==stored){err.style.display='block';err.textContent='❌ Password errata (offline)';btn.textContent='Accedi';btn.disabled=false;return;}
-  }
-  err.style.display='none';btn.textContent='Accedi';btn.disabled=false;
-  const idx=OPS.indexOf(name);
-  U={name,initials:OP_INITIALS[idx],idx,color:OP_COLORS[idx]};
-  localStorage.setItem('pt_autologin',name);
-  document.getElementById('loginPwd').value='';
-  document.getElementById('loginUser').value='';
-  startApp();
-}
-function logout(){
-  U=null;DB={ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
-  localStorage.removeItem('pt_autologin');
-  document.getElementById('app').style.display='none';
-  document.getElementById('fab').style.display='none';
-  document.getElementById('loginScreen').style.display='flex';
-}
-
-function startApp(){
+function startApp() {
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('topbarUser').textContent=U.name;
@@ -318,16 +274,39 @@ function startApp(){
   loadAll();
 }
 
-// Auto-login al caricamento pagina
-window.addEventListener('DOMContentLoaded', async ()=>{
-  const saved=localStorage.getItem('pt_autologin');
-  if(saved && OPS.includes(saved)){
-    const idx=OPS.indexOf(saved);
-    U={name:saved,initials:OP_INITIALS[idx],idx,color:OP_COLORS[idx]};
-    startApp();
+async function doLogin() {
+  const name = document.getElementById('loginUser').value;
+  const pwd = document.getElementById('loginPwd').value;
+  const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtnEl');
+  if(!name||!pwd){errEl.style.display='block';errEl.textContent='❌ Seleziona operatore e inserisci la password';return;}
+  btn.textContent='Accesso...';btn.disabled=true;
+  try {
+    const {data,error} = await sb.from('passwords').select('pwd_hash').eq('operatore',name).single();
+    if(error||!data){errEl.style.display='block';errEl.textContent='❌ Errore di connessione';btn.textContent='Accedi';btn.disabled=false;return;}
+    if(pwd!==data.pwd_hash){errEl.style.display='block';errEl.textContent='❌ Password errata';btn.textContent='Accedi';btn.disabled=false;return;}
+  } catch(e) {
+    const fallback={'Antonio Paone':'pao2024','Giuseppe Vaira':'vaira2024','Giuseppe De Santis':'gdesantis2024','Andrea De Santis':'adesantis2024'};
+    if(pwd!==fallback[name]){errEl.style.display='block';errEl.textContent='❌ Password errata (offline)';btn.textContent='Accedi';btn.disabled=false;return;}
   }
-});
-function openChangePwd(){
+  errEl.style.display='none'; btn.textContent='Accedi'; btn.disabled=false;
+  const idx = OPS.indexOf(name);
+  U = {name, initials:OP_INITIALS[idx], idx, color:OP_COLORS[idx]};
+  localStorage.setItem('pt_autologin', name);
+  document.getElementById('loginPwd').value='';
+  document.getElementById('loginUser').value='';
+  startApp();
+}
+
+function logout() {
+  U=null; DB={ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
+  localStorage.removeItem('pt_autologin');
+  document.getElementById('app').style.display='none';
+  document.getElementById('fab').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+function openChangePwd() {
   document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalPwd">
     <div class="modal">
       <div class="modal-header"><div class="modal-title">🔑 Cambia Password</div><button class="close-btn" onclick="document.getElementById('modalPwd').remove()">✕</button></div>
@@ -340,12 +319,13 @@ function openChangePwd(){
     </div>
   </div>`);
 }
-async function doChangePwd(){
-  const old=document.getElementById('cp-old').value;
-  const n=document.getElementById('cp-new').value;
-  const c=document.getElementById('cp-confirm').value;
-  const errEl=document.getElementById('cp-err');
-  const {data}=await sb.from('passwords').select('pwd_hash').eq('operatore',U.name).single();
+
+async function doChangePwd() {
+  const old = document.getElementById('cp-old').value;
+  const n = document.getElementById('cp-new').value;
+  const c = document.getElementById('cp-confirm').value;
+  const errEl = document.getElementById('cp-err');
+  const {data} = await sb.from('passwords').select('pwd_hash').eq('operatore',U.name).single();
   if(!data||old!==data.pwd_hash){errEl.style.display='block';errEl.textContent='❌ Password attuale errata';return;}
   if(n.length<4){errEl.style.display='block';errEl.textContent='❌ Min. 4 caratteri';return;}
   if(n!==c){errEl.style.display='block';errEl.textContent='❌ Le password non coincidono';return;}
@@ -354,33 +334,35 @@ async function doChangePwd(){
   alert('✅ Password cambiata con successo!');
 }
 
-function showSection(sec){
-  SEC=sec;oTab='mine';oFolder=null;tTab='mine';tFolder=null;
+function showSection(sec) {
+  SEC=sec; oTab='mine'; oFolder=null; tTab='mine'; tFolder=null;
   ['home','ordini','task','storico'].forEach(s=>document.getElementById('nav-'+s)?.classList.toggle('active',s===sec));
   document.getElementById('fab').style.display=sec==='storico'?'none':'flex';
   render();
 }
-function updateBadges(){
-  if(!U)return;
+
+function updateBadges() {
+  if(!U) return;
   document.getElementById('nav-ordini-label').textContent=`ORDINI(${DB.ordini.filter(o=>o.categoria===U.name).length})`;
   document.getElementById('nav-task-label').textContent=`TASK(${DB.task.filter(t=>t.lavoratore===U.name).length})`;
 }
-function render(){
-  const c=document.getElementById('mainContent');
-  if(SEC==='home')c.innerHTML=renderHome();
-  else if(SEC==='ordini')c.innerHTML=renderOrdini();
-  else if(SEC==='task')c.innerHTML=renderTask();
-  else if(SEC==='storico')c.innerHTML=renderStorico();
+
+function render() {
+  const c = document.getElementById('mainContent');
+  if(SEC==='home') c.innerHTML=renderHome();
+  else if(SEC==='ordini') c.innerHTML=renderOrdini();
+  else if(SEC==='task') c.innerHTML=renderTask();
+  else if(SEC==='storico') c.innerHTML=renderStorico();
 }
 
-// ── HOME / CALENDARIO ──
-function renderHome(){
+// ── CALENDARIO ──
+function renderHome() {
   const days=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const d=calDate,todayKey=fmtDate(d);
+  const d=calDate, todayKey=fmtDate(d);
   const dayEvents=DB.eventi.filter(e=>e.date===todayKey);
   const tasks=DB.task.filter(t=>t.lavoratore===U.name);
   let dateLabel='';
-  if(calView==='day')dateLabel=`${days[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  if(calView==='day') dateLabel=`${days[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
   else if(calView==='week'){const s=new Date(d);s.setDate(d.getDate()-d.getDay());const e=new Date(s);e.setDate(s.getDate()+6);dateLabel=`${s.getDate()} – ${e.getDate()} ${MONTHS[d.getMonth()]}`;}
   else dateLabel=`${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   const legend=OPS.map((op,i)=>`<div class="legend-dot"><div class="legend-circle" style="background:${OP_COLORS[i]}"></div>${OP_DISPLAY[i]}</div>`).join('');
@@ -408,24 +390,23 @@ function renderHome(){
       ${tasks.length>3?`<div style="text-align:center;font-size:12px;color:var(--sub);margin-top:6px;">+${tasks.length-3} altri</div>`:''}</div>`:''}`;
 }
 
-// ── FIX: usa ID invece di JSON.stringify ──
-function openEventById(id){
-  const ev=DB.eventi.find(e=>e.id===id);
+function openEventById(id) {
+  const ev = DB.eventi.find(e=>e.id===id);
   if(ev) openEventModal(ev);
 }
 
-function renderDayView(evs){
+function renderDayView(evs) {
   return `<div>${Array.from({length:14},(_,i)=>i+7).map(h=>{
     const he=evs.filter(e=>parseInt((e.time||'0').split(':')[0])===h);
     return `<div class="time-slot"><div class="time-label">${h}:00</div><div style="flex:1">${he.map(e=>`<div class="event-block" style="background:${opColor(e.operator)||'#555'}" onclick="openEventById(${e.id})">${esc(e.title)}${e.operator?`<div class="event-tag">${esc(e.operator.split(' ')[0])}</div>`:''}</div>`).join('')}</div></div>`;
   }).join('')}</div>`;
 }
 
-function renderWeekView(events){
-  const start=new Date(calDate);start.setDate(calDate.getDate()-calDate.getDay());
+function renderWeekView(events) {
+  const start=new Date(calDate); start.setDate(calDate.getDate()-calDate.getDay());
   return `<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:8px;">${Array.from({length:7},(_,i)=>{
-    const d=new Date(start);d.setDate(start.getDate()+i);
-    const key=fmtDate(d),evs=events.filter(e=>e.date===key),isT=key===fmtDate(new Date());
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    const key=fmtDate(d), evs=events.filter(e=>e.date===key), isT=key===fmtDate(new Date());
     return `<div style="flex:1;min-width:0;text-align:center;">
       <div style="font-size:10px;color:${isT?'var(--red)':'var(--sub)'};font-weight:${isT?700:400};margin-bottom:3px;">${['D','L','M','M','G','V','S'][i]}</div>
       <div style="font-size:13px;font-weight:700;color:${isT?'var(--red)':'var(--text)'};">${d.getDate()}</div>
@@ -433,13 +414,13 @@ function renderWeekView(events){
     </div>`;}).join('')}</div>`;
 }
 
-function renderMonthView(events){
-  const y=calDate.getFullYear(),m=calDate.getMonth();
-  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+function renderMonthView(events) {
+  const y=calDate.getFullYear(), m=calDate.getMonth();
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
   let cells=Array.from({length:first},()=>'<div></div>');
   for(let d=1;d<=days;d++){
     const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const evs=events.filter(e=>e.date===key),isT=key===fmtDate(new Date());
+    const evs=events.filter(e=>e.date===key), isT=key===fmtDate(new Date());
     const dots=evs.map(e=>`<div style="width:5px;height:5px;border-radius:50%;background:${opColor(e.operator)||'#555'};display:inline-block;margin:1px;cursor:pointer;" onclick="openEventById(${e.id})"></div>`).join('');
     cells.push(`<div style="text-align:center;padding:3px 1px;"><div style="width:26px;height:26px;border-radius:50%;background:${isT?'var(--red)':'transparent'};display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:12px;font-weight:${isT?700:400};">${d}</div>${dots?`<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:1px;">${dots}</div>`:''}</div>`);
   }
@@ -451,8 +432,7 @@ function calPrev(){if(calView==='day')calDate.setDate(calDate.getDate()-1);else 
 function calNext(){if(calView==='day')calDate.setDate(calDate.getDate()+1);else if(calView==='week')calDate.setDate(calDate.getDate()+7);else calDate.setMonth(calDate.getMonth()+1);render();}
 function goToday(){calDate=new Date();render();}
 
-// ── EVENTI ──
-function openEventModal(ev=null){
+function openEventModal(ev=null) {
   editEvId=ev?ev.id:null;
   document.getElementById('modalEvent')?.remove();
   document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalEvent"><div class="modal">
@@ -468,9 +448,10 @@ function openEventModal(ev=null){
     <button class="save-btn" onclick="saveEvent()">💾 Salva</button>
     ${ev?`<button class="del-btn" onclick="deleteEvent(${ev.id})">🗑️ Elimina Evento</button>`:''}
   </div></div>`);
+  document.getElementById('modalEvent').addEventListener('click',function(e){if(e.target===this)this.remove();});
 }
 
-async function saveEvent(){
+async function saveEvent() {
   const title=document.getElementById('ev-title').value.trim();
   if(!title){alert('Inserisci un titolo');return;}
   const ev={title,date:document.getElementById('ev-date').value,time:document.getElementById('ev-time').value,operator:document.getElementById('ev-op').value,note:document.getElementById('ev-note').value,created_by:U.name};
@@ -485,8 +466,8 @@ async function saveEvent(){
   await loadAll();
 }
 
-async function deleteEvent(id){
-  if(!confirm('Eliminare questo evento?'))return;
+async function deleteEvent(id) {
+  if(!confirm('Eliminare questo evento?')) return;
   await sb.from('eventi').delete().eq('id',id);
   document.getElementById('modalEvent')?.remove();
   editEvId=null;
@@ -496,17 +477,27 @@ async function deleteEvent(id){
 // ── ORDINI ──
 const STATO_ORDER={'Da Ordinare':0,'In Attesa Cliente':1,'Non Lo Trovo':2,'Avvisare':3,'Ordinato':4};
 const BADGE_O={'Da Ordinare':'badge-daordinare','Ordinato':'badge-ordinato','In Attesa Cliente':'badge-attesa','Non Lo Trovo':'badge-nontrovo','Avvisare':'badge-avvisare'};
-function sortOrdini(arr){return [...arr].sort((a,b)=>{const sd=(STATO_ORDER[a.stato]??5)-(STATO_ORDER[b.stato]??5);return sd!==0?sd:(b.id||0)-(a.id||0);});}
-function renderOrdini(){
-  const all=DB.ordini,mine=all.filter(o=>o.categoria===U.name);
-  if(oTab==='mine'){
-    const archivCount=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)&&o.categoria===U.name).length;
+
+function sortOrdini(arr) {
+  return [...arr].sort((a,b)=>{
+    const sd=(STATO_ORDER[a.stato]??5)-(STATO_ORDER[b.stato]??5);
+    return sd!==0?sd:(b.id||0)-(a.id||0);
+  });
+}
+
+function renderOrdini() {
+  const all=DB.ordini, mine=all.filter(o=>o.categoria===U.name);
+  const archivCount=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)).length;
+  const archivMine=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)&&o.categoria===U.name).length;
+
+  if(oTab==='mine') {
     return `<div class="tabs"><button class="tab active" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
-    ${archivCount>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivCount})</button>`:''}
+    ${archivMine>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivMine})</button>`:''}
     ${sortOrdini(mine).length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine assegnato a te</div>`:sortOrdini(mine).map(o=>ordineCard(o)).join('')}`;
   }
-  if(oFolder===null){
+  if(oFolder===null) {
     return `<div class="tabs"><button class="tab" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
+    ${archivCount>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivCount})</button>`:''}
     <div class="folder-item" onclick="oFolder='__all__';render()"><span class="folder-name">Tutti</span><span class="folder-badge" style="background:#555;">${all.length}</span></div>
     ${OPS.map((op,i)=>{const ops=all.filter(o=>o.categoria===op);const daO=ops.filter(o=>o.stato==='Da Ordinare').length;if(!ops.length)return '';
       return `<div class="folder-item" onclick="oFolder='${op}';render()" style="border-left:4px solid ${OP_COLORS[i]};">
@@ -519,9 +510,11 @@ function renderOrdini(){
   <button class="back-btn" onclick="oFolder=null;render()">← Indietro</button>
   ${filtered.length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine</div>`:filtered.map(o=>ordineCard(o)).join('')}`;
 }
+
 function switchOTab(t){oTab=t;oFolder=null;render();}
-function ordineCard(o){
-  const bc=BADGE_O[o.stato]||'badge-daordinare',col=opColor(o.categoria);
+
+function ordineCard(o) {
+  const bc=BADGE_O[o.stato]||'badge-daordinare', col=opColor(o.categoria);
   return `<div class="card" style="border-left:3px solid ${col}">
     <div class="card-header"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:${col};margin-bottom:2px;font-weight:600;">${esc(o.categoria||'')}</div><div class="card-title">${esc(o.cosa)}</div></div><span class="badge ${bc}">${o.stato}</span></div>
     ${o.nome?`<div class="card-sub">👤 ${esc(o.nome)}</div>`:''}
@@ -536,24 +529,49 @@ function ordineCard(o){
     </div>
   </div>`;
 }
-async function archiviaOrdine(id){
-  const now=new Date().toISOString(),mk=monthKeyNow();
+
+async function archiviaOrdine(id) {
+  const now=new Date().toISOString(), mk=monthKeyNow();
   await sb.from('ordini').update({archiviato:now,mese_storico:mk}).eq('id',id);
   await loadAll();
 }
 
-async function archiviaMultipli(){
-  const statiDaArchiviare=['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'];
-  const daArchiviare=DB.ordini.filter(o=>statiDaArchiviare.includes(o.stato));
-  if(!daArchiviare.length){alert('Nessun ordine da archiviare.');return;}
-  if(!confirm(`Archiviare ${daArchiviare.length} ordini (Ordinato, In Attesa, Non Lo Trovo, Avvisare)?`))return;
-  const now=new Date().toISOString(),mk=monthKeyNow();
-  await sb.from('ordini').update({archiviato:now,mese_storico:mk}).in('id',daArchiviare.map(o=>o.id));
+async function archiviaMultipli() {
+  const stati=['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'];
+  const da=DB.ordini.filter(o=>stati.includes(o.stato));
+  if(!da.length){alert('Nessun ordine da archiviare.');return;}
+  if(!confirm(`Archiviare ${da.length} ordini?`)) return;
+  const now=new Date().toISOString(), mk=monthKeyNow();
+  await sb.from('ordini').update({archiviato:now,mese_storico:mk}).in('id',da.map(o=>o.id));
   await loadAll();
 }
-async function delOrdine(id){if(!confirm('Eliminare?'))return;await sb.from('ordini').delete().eq('id',id);await loadAll();}
-function editOrdineStorico(id){
-  const o=DB.storOrdini.find(x=>x.id===id);if(!o)return;
+
+async function delOrdine(id) {
+  if(!confirm('Eliminare?')) return;
+  await sb.from('ordini').delete().eq('id',id);
+  await loadAll();
+}
+
+function editOrdine(id) {
+  const o=DB.ordini.find(x=>x.id===id);
+  if(!o) return;
+  editOId=id;
+  document.getElementById('o-stato').value=o.stato||'Da Ordinare';
+  document.getElementById('o-cosa').value=o.cosa||'';
+  document.getElementById('o-cat').value=o.categoria||OPS[0];
+  document.getElementById('o-nome').value=o.nome||'';
+  document.getElementById('o-tel').value=o.tel||'';
+  document.getElementById('o-costo').value=o.costo||'';
+  document.getElementById('o-acconto').value=o.acconto||'';
+  document.getElementById('o-arrivo').value=o.arrivo||'';
+  document.getElementById('o-note').value=o.note||'';
+  document.getElementById('modalOrdineTitle').textContent='Modifica Ordine';
+  document.getElementById('modalOrdine').classList.add('open');
+}
+
+function editOrdineStorico(id) {
+  const o=DB.storOrdini.find(x=>x.id===id);
+  if(!o) return;
   editOId=id;
   document.getElementById('o-stato').value=o.stato||'Ordinato';
   document.getElementById('o-cosa').value=o.cosa||'';
@@ -567,21 +585,10 @@ function editOrdineStorico(id){
   document.getElementById('modalOrdineTitle').textContent='Modifica Ordine (Storico)';
   document.getElementById('modalOrdine').classList.add('open');
 }
-  const o=DB.ordini.find(x=>x.id===id);if(!o)return;editOId=id;
-  document.getElementById('o-stato').value=o.stato||'Da Ordinare';
-  document.getElementById('o-cosa').value=o.cosa||'';
-  document.getElementById('o-cat').value=o.categoria||OPS[0];
-  document.getElementById('o-nome').value=o.nome||'';
-  document.getElementById('o-tel').value=o.tel||'';
-  document.getElementById('o-costo').value=o.costo||'';
-  document.getElementById('o-acconto').value=o.acconto||'';
-  document.getElementById('o-arrivo').value=o.arrivo||'';
-  document.getElementById('o-note').value=o.note||'';
-  document.getElementById('modalOrdineTitle').textContent='Modifica Ordine';
-  document.getElementById('modalOrdine').classList.add('open');
-}
-async function saveOrdine(){
-  const cosa=document.getElementById('o-cosa').value.trim();if(!cosa){alert('Inserisci cosa ordinare');return;}
+
+async function saveOrdine() {
+  const cosa=document.getElementById('o-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa ordinare');return;}
   const obj={stato:document.getElementById('o-stato').value,cosa,categoria:document.getElementById('o-cat').value,nome:document.getElementById('o-nome').value,tel:document.getElementById('o-tel').value,costo:document.getElementById('o-costo').value||null,acconto:document.getElementById('o-acconto').value||null,arrivo:document.getElementById('o-arrivo').value||null,note:document.getElementById('o-note').value,created_by:U.name};
   if(editOId){
     await sb.from('ordini').update(obj).eq('id',editOId);
@@ -589,18 +596,19 @@ async function saveOrdine(){
     const {data}=await sb.from('ordini').insert(obj).select().single();
     if(data?.arrivo) await callGCal({type:'ordine',cosa:obj.cosa,arrivo:obj.arrivo,nome:obj.nome,categoria:obj.categoria});
   }
-  closeModal('modalOrdine');editOId=null;await loadAll();
+  closeModal('modalOrdine'); editOId=null; await loadAll();
 }
 
 // ── TASK ──
-const faseBadge=f=>({'Da Fare':'badge-dafare','Potenziale Cliente':'badge-potenziale','Contattare':'badge-contattare','Chiuso':'badge-chiuso','Urgente':'badge-urgente'}[f]||'badge-dafare');
-function renderTask(){
-  const allActive=DB.task,mine=allActive.filter(t=>t.lavoratore===U.name);
-  if(tTab==='mine'){
+const faseBadge = f => ({'Da Fare':'badge-dafare','Potenziale Cliente':'badge-potenziale','Contattare':'badge-contattare','Chiuso':'badge-chiuso','Urgente':'badge-urgente'}[f]||'badge-dafare');
+
+function renderTask() {
+  const allActive=DB.task, mine=allActive.filter(t=>t.lavoratore===U.name);
+  if(tTab==='mine') {
     return `<div class="tabs"><button class="tab active" onclick="switchTTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchTTab('all')">TOTALI (${allActive.length})</button></div>
     ${mine.length===0?`<div class="empty"><div class="empty-icon">✅</div>Nessun task assegnato a te</div>`:mine.map(t=>taskCard(t)).join('')}`;
   }
-  if(tFolder===null){
+  if(tFolder===null) {
     return `<div class="tabs"><button class="tab" onclick="switchTTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchTTab('all')">TOTALI (${allActive.length})</button></div>
     <div class="folder-item" onclick="tFolder='__all__';render()"><span class="folder-name">Tutti</span><span class="folder-badge" style="background:#555;">${allActive.length}</span></div>
     ${OPS.map((op,i)=>{const ops=allActive.filter(t=>t.lavoratore===op);const urg=ops.filter(t=>t.fase==='Urgente').length;if(!ops.length)return '';
@@ -614,8 +622,10 @@ function renderTask(){
   <button class="back-btn" onclick="tFolder=null;render()">← Indietro</button>
   ${filtered.length===0?`<div class="empty"><div class="empty-icon">✅</div>Nessun task</div>`:filtered.map(t=>taskCard(t)).join('')}`;
 }
+
 function switchTTab(t){tTab=t;tFolder=null;render();}
-function taskCard(t){
+
+function taskCard(t) {
   const col=opColor(t.lavoratore);
   return `<div class="card" style="border-left:3px solid ${col}">
     <div class="card-header"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:${col};margin-bottom:2px;font-weight:600;">${esc(t.lavoratore||'')}</div><div class="card-title">${esc(t.cosa)}</div></div><span class="badge ${faseBadge(t.fase)}">${t.fase}</span></div>
@@ -630,14 +640,23 @@ function taskCard(t){
     </div>
   </div>`;
 }
-async function closeTask(id){
-  const now=new Date().toISOString(),mk=monthKeyNow();
+
+async function closeTask(id) {
+  const now=new Date().toISOString(), mk=monthKeyNow();
   await sb.from('task').update({fase:'Chiuso',archiviato:now,mese_storico:mk}).eq('id',id);
   await loadAll();
 }
-async function delTask(id){if(!confirm('Eliminare?'))return;await sb.from('task').delete().eq('id',id);await loadAll();}
-function editTask(id){
-  const t=DB.task.find(x=>x.id===id);if(!t)return;editTId=id;
+
+async function delTask(id) {
+  if(!confirm('Eliminare?')) return;
+  await sb.from('task').delete().eq('id',id);
+  await loadAll();
+}
+
+function editTask(id) {
+  const t=DB.task.find(x=>x.id===id);
+  if(!t) return;
+  editTId=id;
   document.getElementById('t-cosa').value=t.cosa||'';
   document.getElementById('t-fase').value=t.fase||'Da Fare';
   document.getElementById('t-lav').value=t.lavoratore||OPS[0];
@@ -648,21 +667,24 @@ function editTask(id){
   document.getElementById('modalTaskTitle').textContent='Modifica Task';
   document.getElementById('modalTask').classList.add('open');
 }
-async function saveTask(){
-  const cosa=document.getElementById('t-cosa').value.trim();if(!cosa){alert('Inserisci cosa fare');return;}
+
+async function saveTask() {
+  const cosa=document.getElementById('t-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa fare');return;}
   const obj={cosa,fase:document.getElementById('t-fase').value,lavoratore:document.getElementById('t-lav').value,nome:document.getElementById('t-nome').value,tel:document.getElementById('t-tel').value,euro:document.getElementById('t-euro').value||null,note:document.getElementById('t-note').value,created_by:U.name};
   if(editTId){await sb.from('task').update(obj).eq('id',editTId);}
   else{await sb.from('task').insert(obj);}
-  closeModal('modalTask');editTId=null;await loadAll();
+  closeModal('modalTask'); editTId=null; await loadAll();
 }
 
 // ── STORICO ──
-function getAvailableMonths(items){
+function getAvailableMonths(items) {
   const mks=new Set(items.map(i=>i.mese_storico||monthKey(i.archiviato||i.created_at||'')));
   return Array.from(mks).sort((a,b)=>b.localeCompare(a));
 }
-function renderStorico(){
-  const storO=DB.storOrdini,storT=DB.storTask;
+
+function renderStorico() {
+  const storO=DB.storOrdini, storT=DB.storTask;
   const items=storicoType==='ordini'?storO:storT;
   const opKey=storicoType==='ordini'?'categoria':'lavoratore';
   const selMonth=localStorage.getItem('pt_stor_month')||'all';
@@ -673,9 +695,9 @@ function renderStorico(){
   </div>
   <div class="export-section">
     <h3>📥 Esporta dati</h3>
-    <div class="export-row"><span class="export-label">📊 Excel (Ordini + Task)</span><button class="export-btn" onclick="exportExcel()">Scarica .xlsx</button></div>
+    <div class="export-row"><span class="export-label">📊 Excel</span><button class="export-btn" onclick="exportExcel()">Scarica .xlsx</button></div>
     <div style="border-top:1px solid var(--border);margin:10px 0;"></div>
-    <div style="margin-bottom:8px;font-size:12px;color:var(--sub);">📇 Contatti Google (.vcf):</div>
+    <div style="margin-bottom:8px;font-size:12px;color:var(--sub);">📇 Contatti (.vcf):</div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <select class="month-select" id="vcfMonth" onchange="localStorage.setItem('pt_stor_month',this.value)">
         <option value="all">Tutti i mesi</option>
@@ -684,11 +706,11 @@ function renderStorico(){
       <button class="export-btn" onclick="exportVCF()">Scarica .vcf</button>
     </div>
   </div>`;
-  if(!items.length)return html+`<div class="empty"><div class="empty-icon">📭</div>Nessun elemento archiviato.</div>`;
+  if(!items.length) return html+`<div class="empty"><div class="empty-icon">📭</div>Nessun elemento archiviato.</div>`;
   OPS.forEach((op,idx)=>{
     const opItems=items.filter(i=>i[opKey]===op);
-    if(!opItems.length)return;
-    const col=OP_COLORS[idx],isOpen=storOpenFolders[op]!==false;
+    if(!opItems.length) return;
+    const col=OP_COLORS[idx], isOpen=storOpenFolders[op]!==false;
     const byMonth={};
     opItems.forEach(item=>{const mk=item.mese_storico||monthKey(item.archiviato||item.created_at||'');if(!byMonth[mk])byMonth[mk]=[];byMonth[mk].push(item);});
     const sortedMonths=Object.keys(byMonth).sort((a,b)=>b.localeCompare(a));
@@ -700,7 +722,7 @@ function renderStorico(){
     if(isOpen){
       html+=`<div style="padding:0 12px 12px;">`;
       sortedMonths.forEach(mk=>{
-        const mItems=byMonth[mk],mKey=op+'_'+mk,mOpen=storOpenMonths[mKey]!==false;
+        const mItems=byMonth[mk], mKey=op+'_'+mk, mOpen=storOpenMonths[mKey]!==false;
         html+=`<div class="month-header" onclick="storOpenMonths['${mKey}']=storOpenMonths['${mKey}']===false?true:false;render()"><span>${monthLabel(mk)}</span><span style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;background:var(--bg2);border-radius:20px;padding:2px 7px;">${mItems.length}</span><span>${mOpen?'▲':'▼'}</span></span></div>`;
         if(mOpen){
           html+=mItems.map(item=>{
@@ -728,8 +750,8 @@ function renderStorico(){
 }
 
 // ── EXPORT ──
-function exportExcel(){
-  const storO=DB.storOrdini,storT=DB.storTask;
+function exportExcel() {
+  const storO=DB.storOrdini, storT=DB.storTask;
   if(!storO.length&&!storT.length){alert('Nessun dato nello storico.');return;}
   const wb=XLSX.utils.book_new();
   const ws1=XLSX.utils.json_to_sheet(storO.map(o=>({'Mese':o.mese_storico||'','Operatore':o.categoria||'','Ordine':o.cosa||'','Stato':o.stato||'','Cliente':o.nome||'','Telefono':o.tel||'','Costo (€)':o.costo||0,'Acconto (€)':o.acconto||0,'Arrivo Stimato':o.arrivo||'','Note':o.note||'','Archiviato il':o.archiviato?new Date(o.archiviato).toLocaleDateString('it-IT'):''})));
@@ -738,7 +760,8 @@ function exportExcel(){
   XLSX.utils.book_append_sheet(wb,ws2,'Task Chiusi');
   XLSX.writeFile(wb,`Paotech_Storico_${monthKeyNow()}.xlsx`);
 }
-function exportVCF(){
+
+function exportVCF() {
   const selMonth=document.getElementById('vcfMonth')?.value||'all';
   const all=[...DB.storOrdini,...DB.storTask];
   const filtered=selMonth==='all'?all:all.filter(i=>(i.mese_storico||monthKey(i.archiviato||i.created_at||''))===selMonth);
@@ -751,20 +774,21 @@ function exportVCF(){
 }
 
 // ── FAB / MODAL ──
-function openModal(){
-  editOId=null;editTId=null;
+function openModal() {
+  editOId=null; editTId=null;
   if(SEC==='ordini'){
     ['o-cosa','o-nome','o-tel','o-costo','o-acconto','o-arrivo','o-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('o-stato').value='Da Ordinare';document.getElementById('o-cat').value=U.name;
+    document.getElementById('o-stato').value='Da Ordinare';
+    document.getElementById('o-cat').value=U.name;
     document.getElementById('modalOrdineTitle').textContent='Nuovo Ordine';
     document.getElementById('modalOrdine').classList.add('open');
   } else if(SEC==='task'){
     ['t-cosa','t-nome','t-tel','t-euro','t-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('t-fase').value='Da Fare';document.getElementById('t-lav').value=U.name;
+    document.getElementById('t-fase').value='Da Fare';
+    document.getElementById('t-lav').value=U.name;
     document.getElementById('modalTaskTitle').textContent='Nuovo Task';
     document.getElementById('modalTask').classList.add('open');
   } else {
-    // HOME: mostra menu scelta
     document.getElementById('modalFabMenu')?.remove();
     document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalFabMenu">
       <div class="modal" style="padding-bottom:28px;">
@@ -777,20 +801,38 @@ function openModal(){
     document.getElementById('modalFabMenu').addEventListener('click',function(e){if(e.target===this)this.remove();});
   }
 }
-function openNewOrdine(){
+
+function openNewOrdine() {
   ['o-cosa','o-nome','o-tel','o-costo','o-acconto','o-arrivo','o-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('o-stato').value='Da Ordinare';document.getElementById('o-cat').value=U.name;
+  document.getElementById('o-stato').value='Da Ordinare';
+  document.getElementById('o-cat').value=U.name;
   document.getElementById('modalOrdineTitle').textContent='Nuovo Ordine';
   document.getElementById('modalOrdine').classList.add('open');
 }
-function openNewTask(){
+
+function openNewTask() {
   ['t-cosa','t-nome','t-tel','t-euro','t-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('t-fase').value='Da Fare';document.getElementById('t-lav').value=U.name;
+  document.getElementById('t-fase').value='Da Fare';
+  document.getElementById('t-lav').value=U.name;
   document.getElementById('modalTaskTitle').textContent='Nuovo Task';
   document.getElementById('modalTask').classList.add('open');
 }
+
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+// ── AUTO LOGIN ──
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('pt_autologin');
+  if(saved && OPS.includes(saved)){
+    const idx = OPS.indexOf(saved);
+    U = {name:saved, initials:OP_INITIALS[idx], idx, color:OP_COLORS[idx]};
+    startApp();
+  }
+});
 </script>
 </body>
 </html>
