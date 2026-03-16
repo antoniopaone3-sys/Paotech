@@ -487,17 +487,12 @@ function sortOrdini(arr) {
 
 function renderOrdini() {
   const all=DB.ordini, mine=all.filter(o=>o.categoria===U.name);
-  const archivCount=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)).length;
-  const archivMine=DB.ordini.filter(o=>['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'].includes(o.stato)&&o.categoria===U.name).length;
-
   if(oTab==='mine') {
     return `<div class="tabs"><button class="tab active" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
-    ${archivMine>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivMine})</button>`:''}
     ${sortOrdini(mine).length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine assegnato a te</div>`:sortOrdini(mine).map(o=>ordineCard(o)).join('')}`;
   }
   if(oFolder===null) {
     return `<div class="tabs"><button class="tab" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
-    ${archivCount>0?`<button style="width:100%;background:#27ae60;border:none;color:#fff;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;" onclick="archiviaMultipli()">📁 Archivia tutti completati (${archivCount})</button>`:''}
     <div class="folder-item" onclick="oFolder='__all__';render()"><span class="folder-name">Tutti</span><span class="folder-badge" style="background:#555;">${all.length}</span></div>
     ${OPS.map((op,i)=>{const ops=all.filter(o=>o.categoria===op);const daO=ops.filter(o=>o.stato==='Da Ordinare').length;if(!ops.length)return '';
       return `<div class="folder-item" onclick="oFolder='${op}';render()" style="border-left:4px solid ${OP_COLORS[i]};">
