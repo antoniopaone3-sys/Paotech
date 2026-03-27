@@ -166,7 +166,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <div class="modal-overlay" id="modalOrdine">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="modalOrdineTitle">Nuovo Ordine</div><button class="close-btn" onclick="closeModal('modalOrdine')">✕</button></div>
-    <div class="field"><label>Stato</label><select id="o-stato"><option>Da Ordinare</option><option>Ordinato</option><option>In Attesa Cliente</option><option>Non Lo Trovo</option><option>Avvisare</option></select></div>
+    <div class="field"><label>Stato</label><select id="o-stato"><option>Da Ordinare</option><option>Ordinato/Attesa Consegna</option><option>In Attesa Cliente</option><option>Non Lo Trovo</option><option>Avvisare</option><option>Ordinato</option></select></div>
     <div class="field"><label>Cosa ordinare *</label><input type="text" id="o-cosa"></div>
     <div class="field"><label>Categoria</label><select id="o-cat"><option>Antonio Paone</option><option>Giuseppe Vaira</option><option>Giuseppe De Santis</option><option>Andrea De Santis</option></select></div>
     <div class="field"><label>Nome e Cognome cliente</label><input type="text" id="o-nome"></div>
@@ -185,7 +185,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="modalTaskTitle">Nuovo Task</div><button class="close-btn" onclick="closeModal('modalTask')">✕</button></div>
     <div class="field"><label>Cosa fare *</label><input type="text" id="t-cosa"></div>
-    <div class="field"><label>Fase</label><select id="t-fase"><option>Da Fare</option><option>Potenziale Cliente</option><option>Contattare</option><option>Urgente</option><option>Chiuso</option></select></div>
+    <div class="field"><label>Fase</label><select id="t-fase"><option>Da Fare</option><option>Potenziale Cliente</option><option>Contattare</option><option>Urgente</option><option>Fatto</option></select></div>
     <div class="field"><label>Lavoratore</label><select id="t-lav"><option>Antonio Paone</option><option>Giuseppe Vaira</option><option>Giuseppe De Santis</option><option>Andrea De Santis</option></select></div>
     <div class="field"><label>Nome e Cognome</label><input type="text" id="t-nome"></div>
     <div class="field"><label>Numero di telefono</label><input type="tel" id="t-tel"></div>
@@ -240,8 +240,8 @@ async function loadAll() {
       sb.from('ordini').select('*').is('archiviato',null).order('id',{ascending:false}),
       sb.from('task').select('*').is('archiviato',null).neq('fase','Chiuso').order('id',{ascending:false}),
       sb.from('eventi').select('*').order('date',{ascending:true}),
-      sb.from('ordini').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
-      sb.from('task').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
+      sb.from('ordini').select('*').not('archiviato','is',null).gte('archiviato', new Date(Date.now()-30*24*60*60*1000).toISOString()).order('archiviato',{ascending:false}),
+      sb.from('task').select('*').not('archiviato','is',null).gte('archiviato', new Date(Date.now()-30*24*60*60*1000).toISOString()).order('archiviato',{ascending:false}),
     ]);
     DB.ordini=o.data||[]; DB.task=t.data||[]; DB.eventi=e.data||[];
     DB.storOrdini=so.data||[]; DB.storTask=st.data||[];
@@ -475,8 +475,8 @@ async function deleteEvent(id) {
 }
 
 // ── ORDINI ──
-const STATO_ORDER={'Da Ordinare':0,'In Attesa Cliente':1,'Non Lo Trovo':2,'Avvisare':3,'Ordinato':4};
-const BADGE_O={'Da Ordinare':'badge-daordinare','Ordinato':'badge-ordinato','In Attesa Cliente':'badge-attesa','Non Lo Trovo':'badge-nontrovo','Avvisare':'badge-avvisare'};
+const STATO_ORDER={'Da Ordinare':0,'Ordinato/Attesa Consegna':1,'In Attesa Cliente':2,'Non Lo Trovo':3,'Avvisare':4,'Ordinato':5};
+const BADGE_O={'Da Ordinare':'badge-daordinare','Ordinato':'badge-ordinato','Ordinato/Attesa Consegna':'badge-attesa','In Attesa Cliente':'badge-attesa','Non Lo Trovo':'badge-nontrovo','Avvisare':'badge-avvisare'};
 
 function sortOrdini(arr) {
   return [...arr].sort((a,b)=>{
@@ -584,7 +584,21 @@ function editOrdineStorico(id) {
 async function saveOrdine() {
   const cosa=document.getElementById('o-cosa').value.trim();
   if(!cosa){alert('Inserisci cosa ordinare');return;}
-  const obj={stato:document.getElementById('o-stato').value,cosa,categoria:document.getElementById('o-cat').value,nome:document.getElementById('o-nome').value,tel:document.getElementById('o-tel').value,costo:document.getElementById('o-costo').value||null,acconto:document.getElementById('o-acconto').value||null,arrivo:document.getElementById('o-arrivo').value||null,note:document.getElementById('o-note').value,created_by:U.name};
+  const stato=document.getElementById('o-stato').value;
+  const archiviaNow = stato==='Ordinato';
+  const obj={
+    stato,cosa,
+    categoria:document.getElementById('o-cat').value,
+    nome:document.getElementById('o-nome').value,
+    tel:document.getElementById('o-tel').value,
+    costo:document.getElementById('o-costo').value||null,
+    acconto:document.getElementById('o-acconto').value||null,
+    arrivo:document.getElementById('o-arrivo').value||null,
+    note:document.getElementById('o-note').value,
+    created_by:U.name,
+    archiviato:archiviaNow?new Date().toISOString():null,
+    mese_storico:archiviaNow?monthKeyNow():null
+  };
   if(editOId){
     await sb.from('ordini').update(obj).eq('id',editOId);
   } else {
@@ -595,7 +609,28 @@ async function saveOrdine() {
 }
 
 // ── TASK ──
-const faseBadge = f => ({'Da Fare':'badge-dafare','Potenziale Cliente':'badge-potenziale','Contattare':'badge-contattare','Chiuso':'badge-chiuso','Urgente':'badge-urgente'}[f]||'badge-dafare');
+const faseBadge = f => ({'Da Fare':'badge-dafare','Potenziale Cliente':'badge-potenziale','Contattare':'badge-contattare','Fatto':'badge-chiuso','Chiuso':'badge-chiuso','Urgente':'badge-urgente'}[f]||'badge-dafare');
+
+async function saveTask() {
+  const cosa=document.getElementById('t-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa fare');return;}
+  const fase=document.getElementById('t-fase').value;
+  const archiviaNow = fase==='Fatto';
+  const obj={
+    cosa, fase:archiviaNow?'Chiuso':fase,
+    lavoratore:document.getElementById('t-lav').value,
+    nome:document.getElementById('t-nome').value,
+    tel:document.getElementById('t-tel').value,
+    euro:document.getElementById('t-euro').value||null,
+    note:document.getElementById('t-note').value,
+    created_by:U.name,
+    archiviato:archiviaNow?new Date().toISOString():null,
+    mese_storico:archiviaNow?monthKeyNow():null
+  };
+  if(editTId){await sb.from('task').update(obj).eq('id',editTId);}
+  else{await sb.from('task').insert(obj);}
+  closeModal('modalTask'); editTId=null; await loadAll();
+}
 
 function renderTask() {
   const allActive=DB.task, mine=allActive.filter(t=>t.lavoratore===U.name);
@@ -745,8 +780,14 @@ function renderStorico() {
 }
 
 // ── EXPORT ──
-function exportExcel() {
-  const storO=DB.storOrdini, storT=DB.storTask;
+async function exportExcel() {
+  setSync('⟳ export...');
+  const [resO, resT] = await Promise.all([
+    sb.from('ordini').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
+    sb.from('task').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
+  ]);
+  const storO=resO.data||[], storT=resT.data||[];
+  setSync('✓ sincronizzato');
   if(!storO.length&&!storT.length){alert('Nessun dato nello storico.');return;}
   const wb=XLSX.utils.book_new();
   const ws1=XLSX.utils.json_to_sheet(storO.map(o=>({'Mese':o.mese_storico||'','Operatore':o.categoria||'','Ordine':o.cosa||'','Stato':o.stato||'','Cliente':o.nome||'','Telefono':o.tel||'','Costo (€)':o.costo||0,'Acconto (€)':o.acconto||0,'Arrivo Stimato':o.arrivo||'','Note':o.note||'','Archiviato il':o.archiviato?new Date(o.archiviato).toLocaleDateString('it-IT'):''})));
