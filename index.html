@@ -63,8 +63,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .action-btn.call{color:#4caf50;}
 .action-btn.del{color:#ff4444;}
 .action-btn.arch{color:#4caf50;}
-.fab{position:fixed;bottom:15%;right:16px;width:52px;height:52px;border-radius:50%;background:var(--red);border:3px solid #B8960C;color:#B8960C;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(232,52,74,.5),0 0 8px rgba(184,150,12,.3);display:flex;align-items:center;justify-content:center;z-index:100;}
-.search-btn{position:fixed;bottom:calc(15% + 70px);right:16px;width:48px;height:48px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100;}
+.fab{position:fixed;bottom:90px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--red);border:3px solid #B8960C;color:#B8960C;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(232,52,74,.5),0 0 8px rgba(184,150,12,.3);display:flex;align-items:center;justify-content:center;z-index:100;}
 .search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;flex-direction:column;padding:16px;}
 .search-overlay.open{display:flex;}
 .search-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;}
@@ -169,7 +168,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
-<button class="search-btn" id="searchBtn" onclick="openSearch()" style="display:none">🔍</button>
 <button class="fab" id="fab" onclick="openModal()" style="display:none">+</button>
 
 <div class="search-overlay" id="searchOverlay">
@@ -848,7 +846,8 @@ function openModal() {
         <div class="modal-header"><div class="modal-title">Cosa vuoi creare?</div><button class="close-btn" onclick="document.getElementById('modalFabMenu').remove()">✕</button></div>
         <button class="save-btn" style="background:var(--c-ap);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openEventModal()">📅 Nuovo Evento</button>
         <button class="save-btn" style="background:var(--c-gv);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewOrdine()">📦 Nuovo Ordine</button>
-        <button class="save-btn" style="background:var(--c-gd);" onclick="document.getElementById('modalFabMenu').remove();openNewTask()">☑️ Nuovo Task</button>
+        <button class="save-btn" style="background:var(--c-gd);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewTask()">☑️ Nuovo Task</button>
+        <button class="save-btn" style="background:#555;" onclick="document.getElementById('modalFabMenu').remove();openSearch()">🔍 Cerca</button>
       </div>
     </div>`);
     document.getElementById('modalFabMenu').addEventListener('click',function(e){if(e.target===this)this.remove();});
