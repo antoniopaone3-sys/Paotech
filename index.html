@@ -827,31 +827,17 @@ function exportVCF() {
 // ── FAB / MODAL ──
 function openModal() {
   editOId=null; editTId=null;
-  if(SEC==='ordini'){
-    ['o-cosa','o-nome','o-tel','o-costo','o-acconto','o-arrivo','o-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('o-stato').value='Da Ordinare';
-    document.getElementById('o-cat').value=U.name;
-    document.getElementById('modalOrdineTitle').textContent='Nuovo Ordine';
-    document.getElementById('modalOrdine').classList.add('open');
-  } else if(SEC==='task'){
-    ['t-cosa','t-nome','t-tel','t-euro','t-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('t-fase').value='Da Fare';
-    document.getElementById('t-lav').value=U.name;
-    document.getElementById('modalTaskTitle').textContent='Nuovo Task';
-    document.getElementById('modalTask').classList.add('open');
-  } else {
-    document.getElementById('modalFabMenu')?.remove();
-    document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalFabMenu">
-      <div class="modal" style="padding-bottom:28px;">
-        <div class="modal-header"><div class="modal-title">Cosa vuoi creare?</div><button class="close-btn" onclick="document.getElementById('modalFabMenu').remove()">✕</button></div>
-        <button class="save-btn" style="background:var(--c-ap);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openEventModal()">📅 Nuovo Evento</button>
-        <button class="save-btn" style="background:var(--c-gv);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewOrdine()">📦 Nuovo Ordine</button>
-        <button class="save-btn" style="background:var(--c-gd);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewTask()">☑️ Nuovo Task</button>
-        <button class="save-btn" style="background:#555;" onclick="document.getElementById('modalFabMenu').remove();openSearch()">🔍 Cerca</button>
-      </div>
-    </div>`);
-    document.getElementById('modalFabMenu').addEventListener('click',function(e){if(e.target===this)this.remove();});
-  }
+  document.getElementById('modalFabMenu')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalFabMenu">
+    <div class="modal" style="padding-bottom:28px;">
+      <div class="modal-header"><div class="modal-title">Cosa vuoi creare?</div><button class="close-btn" onclick="document.getElementById('modalFabMenu').remove()">✕</button></div>
+      <button class="save-btn" style="background:var(--c-ap);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openEventModal()">📅 Nuovo Evento</button>
+      <button class="save-btn" style="background:var(--c-gv);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewOrdine()">📦 Nuovo Ordine</button>
+      <button class="save-btn" style="background:var(--c-gd);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewTask()">☑️ Nuovo Task</button>
+      <button class="save-btn" style="background:#555;" onclick="document.getElementById('modalFabMenu').remove();openSearch()">🔍 Cerca</button>
+    </div>
+  </div>`);
+  document.getElementById('modalFabMenu').addEventListener('click',function(e){if(e.target===this)this.remove();});
 }
 
 function openNewOrdine() {
