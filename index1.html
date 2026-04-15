@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Paotech</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--red:#E8344A;--bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;--text:#fff;--sub:#aaa;--border:#3a3a3a;
+  --c-ap:#E8344A;--c-gv:#3a7bd5;--c-gd:#27ae60;--c-ad:#8e44ad;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100vh;height:100dvh;overflow:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:20px;}
+#loginScreen h1{font-size:22px;margin-bottom:8px;color:var(--red);}
+#loginScreen .sub{font-size:13px;color:var(--sub);margin-bottom:28px;}
+.login-card{background:var(--bg2);border-radius:16px;padding:28px;width:100%;max-width:360px;border:1px solid var(--border);}
+.login-card h2{margin-bottom:20px;font-size:15px;color:var(--sub);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;color:var(--sub);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:14px;}
+.field textarea{resize:vertical;min-height:70px;}
+.login-err{color:#ff4444;font-size:13px;margin-bottom:12px;display:none;}
+.login-btn{width:100%;background:var(--red);border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+.pwd-toggle{position:relative;}
+.pwd-toggle input{padding-right:44px;}
+.pwd-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--sub);cursor:pointer;font-size:16px;}
+#app{display:none;flex-direction:column;height:100vh;height:100dvh;}
+.topbar{background:var(--red);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.logo-small{width:38px;height:38px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--red);cursor:pointer;}
+.topbar-title{font-size:16px;font-weight:700;cursor:pointer;}
+.topbar-user{font-size:12px;opacity:.8;}
+.icon-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px;}
+.content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+.bottomnav{background:var(--red);display:flex;padding:8px 0;padding-bottom:calc(12px + env(safe-area-inset-bottom));flex-shrink:0;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:rgba(255,255,255,.5);font-size:10px;font-weight:800;border:none;background:none;padding:6px 4px;letter-spacing:.5px;text-transform:uppercase;}
+.nav-item.active{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.5);}
+.nav-item.active .nav-icon{transform:scale(1.2);}
+.nav-item.active::after{content:'';display:block;width:24px;height:3px;background:#fff;border-radius:2px;margin-top:2px;}
+.nav-icon{font-size:22px;transition:transform .15s;}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:14px;}
+.tab{flex:1;background:none;border:none;color:var(--sub);padding:10px 6px;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;text-align:center;}
+.tab.active{color:var(--red);border-bottom-color:var(--red);}
+.card{background:var(--bg2);border-radius:12px;padding:13px;margin-bottom:9px;border:1px solid var(--border);}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.card-title{font-size:14px;font-weight:600;line-height:1.3;}
+.badge{font-size:10px;padding:3px 7px;border-radius:20px;font-weight:700;white-space:nowrap;flex-shrink:0;margin-left:8px;}
+.badge-daordinare{background:#3a2010;color:#ff8c42;}
+.badge-ordinato{background:#0d2e1a;color:#4caf50;}
+.badge-attesa{background:#1a1a30;color:#7c9eff;}
+.badge-nontrovo{background:#2e1a1a;color:#ff4444;}
+.badge-avvisare{background:#2a1a2e;color:#c97dff;}
+.badge-dafare{background:#2a2010;color:#ffc042;}
+.badge-potenziale{background:#1a2030;color:#7cb8ff;}
+.badge-contattare{background:#102020;color:#42ddc4;}
+.badge-chiuso{background:#1a2e1a;color:#4caf50;}
+.badge-urgente{background:#2e1010;color:#ff4444;}
+.card-sub{font-size:12px;color:var(--sub);margin-bottom:3px;}
+.card-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px;}
+.action-btn{background:var(--bg3);border:1px solid var(--border);color:var(--sub);width:33px;height:33px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.action-btn.wa{color:#25D366;}
+.action-btn.call{color:#4caf50;}
+.action-btn.del{color:#ff4444;}
+.action-btn.arch{color:#4caf50;}
+.fab{position:fixed;bottom:90px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--red);border:3px solid #B8960C;color:#B8960C;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(232,52,74,.5),0 0 8px rgba(184,150,12,.3);display:flex;align-items:center;justify-content:center;z-index:100;}
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;flex-direction:column;padding:16px;}
+.search-overlay.open{display:flex;}
+.search-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;}
+.search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-size:15px;}
+.search-close{background:var(--bg3);border:none;color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;}
+.search-results{flex:1;overflow-y:auto;}
+.search-section{font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 6px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:92vh;overflow-y:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-title{font-size:17px;font-weight:700;}
+.close-btn{background:var(--bg3);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.save-btn{width:100%;background:var(--red);border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;}
+.del-btn{width:100%;background:#ff4444;border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+.folder-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.folder-name{font-weight:700;font-size:14px;}
+.folder-badge{border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:#fff;}
+.folder-badge.zero{background:var(--bg3)!important;color:var(--sub);}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-nav-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;}
+.cal-date{font-size:15px;font-weight:700;}
+.cal-view-btn{background:var(--bg3);border:1px solid var(--border);color:var(--sub);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;}
+.cal-view-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.time-slot{display:flex;align-items:flex-start;gap:10px;padding:3px 0;min-height:38px;border-bottom:1px solid var(--border);}
+.time-label{font-size:11px;color:var(--sub);width:38px;flex-shrink:0;padding-top:6px;}
+.event-block{border-radius:6px;padding:5px 9px;font-size:12px;flex:1;margin-bottom:3px;color:#fff;cursor:pointer;}
+.event-tag{background:rgba(255,255,255,.25);border-radius:4px;padding:1px 5px;font-size:10px;margin-top:2px;display:inline-block;}
+.cal-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.legend-dot{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);}
+.legend-circle{width:10px;height:10px;border-radius:50%;}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--sub);cursor:pointer;font-size:13px;margin-bottom:14px;padding:0;}
+.empty{text-align:center;padding:50px 20px;color:var(--sub);}
+.empty-icon{font-size:44px;margin-bottom:10px;}
+.sec-title{font-size:16px;font-weight:700;}
+.stor-folder{background:var(--bg2);border-radius:12px;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);}
+.stor-folder-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.month-header{background:var(--bg3);border-radius:8px;padding:8px 12px;margin-bottom:6px;margin-top:10px;font-weight:700;font-size:12px;color:var(--sub);display:flex;justify-content:space-between;cursor:pointer;}
+.storico-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.storico-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;}
+.storico-btn.active{background:var(--red);border-color:var(--red);}
+.export-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.export-section h3{font-size:14px;font-weight:700;margin-bottom:12px;}
+.export-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.export-label{font-size:13px;color:var(--sub);}
+.export-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;}
+.month-select{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div style="font-size:48px;font-weight:900;color:var(--red);letter-spacing:-2px;margin-bottom:6px;">P</div>
+  <h1>PAOTECH</h1>
+  <div class="sub">Repair Center</div>
+  <div class="login-card">
+    <h2>Accedi al tuo account</h2>
+    <div class="field">
+      <label>Operatore</label>
+      <select id="loginUser">
+        <option value="">— Seleziona —</option>
+        <option value="Antonio Paone">Antonio Paone</option>
+        <option value="Giuseppe Vaira">Giuseppe Vaira</option>
+        <option value="Giuseppe De Santis">Giuseppe De Santis</option>
+        <option value="Andrea De Santis">Andrea De Santis</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="pwd-toggle">
+        <input type="password" id="loginPwd" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="pwd-eye" onclick="togglePwd('loginPwd',this)">👁</button>
+      </div>
+    </div>
+    <div class="login-err" id="loginErr">❌ Credenziali errate</div>
+    <button class="login-btn" id="loginBtnEl" onclick="doLogin()">Accedi</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-small" onclick="showSection('home')">P</div>
+      <div onclick="showSection('home')" style="cursor:pointer;">
+        <div class="topbar-title">PAOTECH</div>
+        <div class="topbar-user" id="topbarUser"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <span id="syncIndicator" style="font-size:10px;opacity:.7;"></span>
+      <button class="icon-btn" onclick="openChangePwd()">🔑</button>
+      <button class="icon-btn" onclick="logout()">⏻</button>
+    </div>
+  </div>
+  <div class="content" id="mainContent"></div>
+  <div class="bottomnav">
+    <button class="nav-item active" id="nav-home" onclick="showSection('home')"><span class="nav-icon">🏠</span>HOME</button>
+    <button class="nav-item" id="nav-ordini" onclick="showSection('ordini')"><span class="nav-icon">🛒</span><span id="nav-ordini-label">ORDINI</span></button>
+    <button class="nav-item" id="nav-task" onclick="showSection('task')"><span class="nav-icon">☑️</span><span id="nav-task-label">TASK</span></button>
+    <button class="nav-item" id="nav-storico" onclick="showSection('storico')"><span class="nav-icon">📚</span>STORICO</button>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="openModal()" style="display:none">+</button>
+
+<div class="modal-overlay" id="modalOrdine">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="modalOrdineTitle">Nuovo Ordine</div><button class="close-btn" onclick="closeModal('modalOrdine')">✕</button></div>
+    <div class="field"><label>Stato</label><select id="o-stato"><option>Da Ordinare</option><option>Ordinato/Attesa Consegna</option><option>In Attesa Cliente</option><option>Non Lo Trovo</option><option>Avvisare</option><option>Ordinato</option></select></div>
+    <div class="field"><label>Cosa ordinare *</label><input type="text" id="o-cosa"></div>
+    <div class="field"><label>Categoria</label><select id="o-cat"><option>Antonio Paone</option><option>Giuseppe Vaira</option><option>Giuseppe De Santis</option><option>Andrea De Santis</option></select></div>
+    <div class="field"><label>Nome e Cognome cliente</label><input type="text" id="o-nome"></div>
+    <div class="field"><label>Numero di telefono</label><input type="tel" id="o-tel"></div>
+    <div class="row2">
+      <div class="field"><label>Costo (€)</label><input type="number" id="o-costo" min="0"></div>
+      <div class="field"><label>Acconto (€)</label><input type="number" id="o-acconto" min="0"></div>
+    </div>
+    <div class="field"><label>Arrivo stimato</label><input type="date" id="o-arrivo"></div>
+    <div class="field"><label>Note / Link</label><textarea id="o-note"></textarea></div>
+    <button class="save-btn" onclick="saveOrdine()">💾 Salva Ordine</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTask">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="modalTaskTitle">Nuovo Task</div><button class="close-btn" onclick="closeModal('modalTask')">✕</button></div>
+    <div class="field"><label>Cosa fare *</label><input type="text" id="t-cosa"></div>
+    <div class="field"><label>Fase</label><select id="t-fase"><option>Da Fare</option><option>Potenziale Cliente</option><option>Contattare</option><option>Urgente</option><option>Fatto</option></select></div>
+    <div class="field"><label>Lavoratore</label><select id="t-lav"><option>Antonio Paone</option><option>Giuseppe Vaira</option><option>Giuseppe De Santis</option><option>Andrea De Santis</option></select></div>
+    <div class="field"><label>Nome e Cognome</label><input type="text" id="t-nome"></div>
+    <div class="field"><label>Numero di telefono</label><input type="tel" id="t-tel"></div>
+    <div class="field"><label>Euro (€)</label><input type="number" id="t-euro" min="0"></div>
+    <div class="field"><label>Note</label><textarea id="t-note"></textarea></div>
+    <button class="save-btn" onclick="saveTask()">💾 Salva Task</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://lpepweefewzhyolvojvh.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwZXB3ZWVmZXd6aHlvbHZvanZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTA2NzYsImV4cCI6MjA4ODkyNjY3Nn0.DPx-yTvTiW0enedvLkwmlRWrvMn3nj14_ozA3MfPKxc';
+const GCAL_FN_URL   = `${SUPABASE_URL}/functions/v1/google-cal`;
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const OPS = ['Antonio Paone','Giuseppe Vaira','Giuseppe De Santis','Andrea De Santis'];
+const OP_DISPLAY = ['Antonio','Giuseppe V.','Giuseppe D.','Andrea'];
+const OP_COLORS = ['#E8344A','#3a7bd5','#27ae60','#8e44ad'];
+const OP_INITIALS = ['AP','GV','GD','AD'];
+const MONTHS = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+
+let U = null;
+let SEC = 'home';
+let oTab = 'mine', oFolder = null;
+let tTab = 'mine', tFolder = null;
+let storicoType = 'ordini';
+let storOpenFolders = {}, storOpenMonths = {};
+let editOId = null, editTId = null, editEvId = null;
+let calView = 'day', calDate = new Date();
+let DB = {ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
+
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const monthKeyNow = () => { const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; };
+const monthKey = s => s ? s.substring(0,7) : monthKeyNow();
+const monthLabel = mk => { const[y,m]=mk.split('-'); return `${MONTHS[parseInt(m)-1]} ${y}`; };
+const opColor = name => { const i=OPS.indexOf(name); return i>=0?OP_COLORS[i]:'#666'; };
+const wa = tel => window.open(`https://wa.me/39${tel.replace(/\D/g,'')}`);
+const callTel = tel => { window.location.href=`tel:+39${tel.replace(/\D/g,'')}`; };
+const setSync = (msg,err=false) => { const el=document.getElementById('syncIndicator'); if(el){el.textContent=msg;el.style.color=err?'#ff4444':'#4caf50';} };
+
+function togglePwd(inputId, btn) {
+  const el = document.getElementById(inputId);
+  if(el.type==='password'){el.type='text';btn.textContent='🙈';}
+  else{el.type='password';btn.textContent='👁';}
+}
+
+async function loadAll() {
+  setSync('⟳ sync...');
+  try {
+    const [o,t,e,so,st] = await Promise.all([
+      sb.from('ordini').select('*').is('archiviato',null).order('id',{ascending:false}),
+      sb.from('task').select('*').is('archiviato',null).neq('fase','Chiuso').order('id',{ascending:false}),
+      sb.from('eventi').select('*').order('date',{ascending:true}),
+      sb.from('ordini').select('*').not('archiviato','is',null).gte('archiviato', new Date(Date.now()-30*24*60*60*1000).toISOString()).order('archiviato',{ascending:false}),
+      sb.from('task').select('*').not('archiviato','is',null).gte('archiviato', new Date(Date.now()-30*24*60*60*1000).toISOString()).order('archiviato',{ascending:false}),
+    ]);
+    DB.ordini=o.data||[]; DB.task=t.data||[]; DB.eventi=e.data||[];
+    DB.storOrdini=so.data||[]; DB.storTask=st.data||[];
+    setSync('✓ sincronizzato');
+    updateBadges();
+    render();
+  } catch(err) { setSync('⚠ offline',true); console.error(err); }
+}
+
+function setupRealtime() {
+  sb.channel('paotech-changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'ordini'},()=>loadAll())
+    .on('postgres_changes',{event:'*',schema:'public',table:'task'},()=>loadAll())
+    .on('postgres_changes',{event:'*',schema:'public',table:'eventi'},()=>loadAll())
+    .subscribe();
+}
+
+async function callGCal(payload) {
+  try {
+    await fetch(GCAL_FN_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON}`},body:JSON.stringify(payload)});
+  } catch(e) { console.warn('GCal non disponibile:',e); }
+}
+
+function startApp() {
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('topbarUser').textContent=U.name;
+  document.getElementById('fab').style.display='flex';
+  setupRealtime();
+  loadAll();
+}
+
+async function doLogin() {
+  const name = document.getElementById('loginUser').value;
+  const pwd = document.getElementById('loginPwd').value;
+  const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtnEl');
+  if(!name||!pwd){errEl.style.display='block';errEl.textContent='❌ Seleziona operatore e inserisci la password';return;}
+  btn.textContent='Accesso...';btn.disabled=true;
+  try {
+    const {data,error} = await sb.from('passwords').select('pwd_hash').eq('operatore',name).single();
+    if(error||!data){errEl.style.display='block';errEl.textContent='❌ Errore di connessione';btn.textContent='Accedi';btn.disabled=false;return;}
+    if(pwd!==data.pwd_hash){errEl.style.display='block';errEl.textContent='❌ Password errata';btn.textContent='Accedi';btn.disabled=false;return;}
+  } catch(e) {
+    const fallback={'Antonio Paone':'pao2024','Giuseppe Vaira':'vaira2024','Giuseppe De Santis':'gdesantis2024','Andrea De Santis':'adesantis2024'};
+    if(pwd!==fallback[name]){errEl.style.display='block';errEl.textContent='❌ Password errata (offline)';btn.textContent='Accedi';btn.disabled=false;return;}
+  }
+  errEl.style.display='none'; btn.textContent='Accedi'; btn.disabled=false;
+  const idx = OPS.indexOf(name);
+  U = {name, initials:OP_INITIALS[idx], idx, color:OP_COLORS[idx]};
+  localStorage.setItem('pt_autologin', name);
+  document.getElementById('loginPwd').value='';
+  document.getElementById('loginUser').value='';
+  startApp();
+}
+
+function logout() {
+  U=null; DB={ordini:[],task:[],eventi:[],storOrdini:[],storTask:[]};
+  localStorage.removeItem('pt_autologin');
+  document.getElementById('app').style.display='none';
+  document.getElementById('fab').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+function openChangePwd() {
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalPwd">
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">🔑 Cambia Password</div><button class="close-btn" onclick="document.getElementById('modalPwd').remove()">✕</button></div>
+      <div style="font-size:13px;color:var(--sub);margin-bottom:16px;">Account: <strong style="color:var(--text)">${U.name}</strong></div>
+      <div class="field"><label>Password attuale</label><div class="pwd-toggle"><input type="password" id="cp-old"><button class="pwd-eye" onclick="togglePwd('cp-old',this)">👁</button></div></div>
+      <div class="field"><label>Nuova password</label><div class="pwd-toggle"><input type="password" id="cp-new"><button class="pwd-eye" onclick="togglePwd('cp-new',this)">👁</button></div></div>
+      <div class="field"><label>Conferma nuova password</label><div class="pwd-toggle"><input type="password" id="cp-confirm"><button class="pwd-eye" onclick="togglePwd('cp-confirm',this)">👁</button></div></div>
+      <div id="cp-err" style="color:#ff4444;font-size:13px;margin-bottom:10px;display:none;"></div>
+      <button class="save-btn" onclick="doChangePwd()">Salva nuova password</button>
+    </div>
+  </div>`);
+}
+
+async function doChangePwd() {
+  const old = document.getElementById('cp-old').value;
+  const n = document.getElementById('cp-new').value;
+  const c = document.getElementById('cp-confirm').value;
+  const errEl = document.getElementById('cp-err');
+  const {data} = await sb.from('passwords').select('pwd_hash').eq('operatore',U.name).single();
+  if(!data||old!==data.pwd_hash){errEl.style.display='block';errEl.textContent='❌ Password attuale errata';return;}
+  if(n.length<4){errEl.style.display='block';errEl.textContent='❌ Min. 4 caratteri';return;}
+  if(n!==c){errEl.style.display='block';errEl.textContent='❌ Le password non coincidono';return;}
+  await sb.from('passwords').update({pwd_hash:n,updated_at:new Date().toISOString()}).eq('operatore',U.name);
+  document.getElementById('modalPwd').remove();
+  alert('✅ Password cambiata con successo!');
+}
+
+function showSection(sec) {
+  SEC=sec; oTab='mine'; oFolder=null; tTab='mine'; tFolder=null;
+  ['home','ordini','task','storico'].forEach(s=>document.getElementById('nav-'+s)?.classList.toggle('active',s===sec));
+  document.getElementById('fab').style.display=sec==='storico'?'none':'flex';
+  render();
+}
+
+function updateBadges() {
+  if(!U) return;
+  document.getElementById('nav-ordini-label').textContent=`ORDINI(${DB.ordini.filter(o=>o.categoria===U.name).length})`;
+  document.getElementById('nav-task-label').textContent=`TASK(${DB.task.filter(t=>t.lavoratore===U.name).length})`;
+}
+
+function render() {
+  const c = document.getElementById('mainContent');
+  if(SEC==='home') c.innerHTML=renderHome();
+  else if(SEC==='ordini') c.innerHTML=renderOrdini();
+  else if(SEC==='task') c.innerHTML=renderTask();
+  else if(SEC==='storico') c.innerHTML=renderStorico();
+}
+
+// ── CALENDARIO ──
+function renderHome() {
+  const days=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const d=calDate, todayKey=fmtDate(d);
+  const dayEvents=DB.eventi.filter(e=>e.date===todayKey);
+  const tasks=DB.task.filter(t=>t.lavoratore===U.name);
+  let dateLabel='';
+  if(calView==='day') dateLabel=`${days[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  else if(calView==='week'){const s=new Date(d);s.setDate(d.getDate()-d.getDay());const e=new Date(s);e.setDate(s.getDate()+6);dateLabel=`${s.getDate()} – ${e.getDate()} ${MONTHS[d.getMonth()]}`;}
+  else dateLabel=`${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  const legend=OPS.map((op,i)=>`<div class="legend-dot"><div class="legend-circle" style="background:${OP_COLORS[i]}"></div>${OP_DISPLAY[i]}</div>`).join('');
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div class="sec-title">Calendario</div>
+    </div>
+    <div class="cal-legend">${legend}</div>
+    <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;">
+      ${['day','week','month'].map(v=>`<button class="cal-view-btn ${calView===v?'active':''}" onclick="setCalView('${v}')">${v==='day'?'Giorno':v==='week'?'Settimana':'Mese'}</button>`).join('')}
+      <button class="cal-view-btn" onclick="goToday()" style="margin-left:auto;color:var(--red);border-color:var(--red);">Oggi</button>
+    </div>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <div class="cal-date">${dateLabel}</div>
+      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    </div>
+    ${calView==='day'?renderDayView(dayEvents):calView==='week'?renderWeekView(DB.eventi):renderMonthView(DB.eventi)}
+    ${tasks.length>0?`<div style="margin-top:18px;"><div class="sec-title" style="margin-bottom:10px;">📋 I tuoi Task aperti (${tasks.length})</div>
+      ${tasks.slice(0,3).map(t=>`<div class="card" style="border-left:3px solid ${opColor(t.lavoratore)}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-size:13px;font-weight:600;">${esc(t.cosa)}</div><div style="font-size:11px;color:var(--sub);">${esc(t.lavoratore)}</div></div>
+          <span class="badge ${faseBadge(t.fase)}">${t.fase}</span>
+        </div></div>`).join('')}
+      ${tasks.length>3?`<div style="text-align:center;font-size:12px;color:var(--sub);margin-top:6px;">+${tasks.length-3} altri</div>`:''}</div>`:''}`;
+}
+
+function openEventById(id) {
+  const ev = DB.eventi.find(e=>e.id===id);
+  if(ev) openEventModal(ev);
+}
+
+function renderDayView(evs) {
+  return `<div>${Array.from({length:14},(_,i)=>i+7).map(h=>{
+    const he=evs.filter(e=>parseInt((e.time||'0').split(':')[0])===h);
+    return `<div class="time-slot"><div class="time-label">${h}:00</div><div style="flex:1">${he.map(e=>`<div class="event-block" style="background:${opColor(e.operator)||'#555'}" onclick="openEventById(${e.id})">${esc(e.title)}${e.operator?`<div class="event-tag">${esc(e.operator.split(' ')[0])}</div>`:''}</div>`).join('')}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function renderWeekView(events) {
+  const start=new Date(calDate); start.setDate(calDate.getDate()-calDate.getDay());
+  return `<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:8px;">${Array.from({length:7},(_,i)=>{
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    const key=fmtDate(d), evs=events.filter(e=>e.date===key), isT=key===fmtDate(new Date());
+    return `<div style="flex:1;min-width:0;text-align:center;">
+      <div style="font-size:10px;color:${isT?'var(--red)':'var(--sub)'};font-weight:${isT?700:400};margin-bottom:3px;">${['D','L','M','M','G','V','S'][i]}</div>
+      <div style="font-size:13px;font-weight:700;color:${isT?'var(--red)':'var(--text)'};">${d.getDate()}</div>
+      ${evs.map(e=>`<div style="background:${opColor(e.operator)||'#555'};border-radius:4px;font-size:9px;padding:2px 3px;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#fff;cursor:pointer;" onclick="openEventById(${e.id})">${esc(e.title)}</div>`).join('')}
+    </div>`;}).join('')}</div>`;
+}
+
+function renderMonthView(events) {
+  const y=calDate.getFullYear(), m=calDate.getMonth();
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  let cells=Array.from({length:first},()=>'<div></div>');
+  for(let d=1;d<=days;d++){
+    const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const evs=events.filter(e=>e.date===key), isT=key===fmtDate(new Date());
+    const dots=evs.map(e=>`<div style="width:5px;height:5px;border-radius:50%;background:${opColor(e.operator)||'#555'};display:inline-block;margin:1px;cursor:pointer;" onclick="openEventById(${e.id})"></div>`).join('');
+    cells.push(`<div style="text-align:center;padding:3px 1px;"><div style="width:26px;height:26px;border-radius:50%;background:${isT?'var(--red)':'transparent'};display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:12px;font-weight:${isT?700:400};">${d}</div>${dots?`<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:1px;">${dots}</div>`:''}</div>`);
+  }
+  return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:6px;">${['D','L','M','M','G','V','S'].map(d=>`<div style="text-align:center;font-size:10px;color:var(--sub);padding:3px;">${d}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;">${cells.join('')}</div>`;
+}
+
+function setCalView(v){calView=v;render();}
+function calPrev(){if(calView==='day')calDate.setDate(calDate.getDate()-1);else if(calView==='week')calDate.setDate(calDate.getDate()-7);else calDate.setMonth(calDate.getMonth()-1);render();}
+function calNext(){if(calView==='day')calDate.setDate(calDate.getDate()+1);else if(calView==='week')calDate.setDate(calDate.getDate()+7);else calDate.setMonth(calDate.getMonth()+1);render();}
+function goToday(){calDate=new Date();render();}
+
+function openEventModal(ev=null) {
+  editEvId=ev?ev.id:null;
+  document.getElementById('modalEvent')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalEvent"><div class="modal">
+    <div class="modal-header"><div class="modal-title">${ev?'✏️ Modifica Evento':'Nuovo Evento'}</div><button class="close-btn" onclick="document.getElementById('modalEvent').remove()">✕</button></div>
+    <div class="field"><label>Titolo *</label><input type="text" id="ev-title" value="${ev?esc(ev.title):''}"></div>
+    <div class="field"><label>Data</label><input type="date" id="ev-date" value="${ev?ev.date:fmtDate(calDate)}"></div>
+    <div class="field"><label>Ora</label><input type="time" id="ev-time" value="${ev?ev.time||'09:00':'09:00'}"></div>
+    <div class="field"><label>Operatore</label><select id="ev-op">
+      <option value="">Tutti</option>
+      ${OPS.map(o=>`<option ${ev&&ev.operator===o?'selected':''}>${o}</option>`).join('')}
+    </select></div>
+    <div class="field"><label>Note</label><textarea id="ev-note">${ev?esc(ev.note||''):''}</textarea></div>
+    <button class="save-btn" onclick="saveEvent()">💾 Salva</button>
+    ${ev?`<button class="del-btn" onclick="deleteEvent(${ev.id})">🗑️ Elimina Evento</button>`:''}
+  </div></div>`);
+  document.getElementById('modalEvent').addEventListener('click',function(e){if(e.target===this)this.remove();});
+}
+
+async function saveEvent() {
+  const title=document.getElementById('ev-title').value.trim();
+  if(!title){alert('Inserisci un titolo');return;}
+  const ev={title,date:document.getElementById('ev-date').value,time:document.getElementById('ev-time').value,operator:document.getElementById('ev-op').value,note:document.getElementById('ev-note').value,created_by:U.name};
+  if(editEvId){
+    await sb.from('eventi').update(ev).eq('id',editEvId);
+  } else {
+    const {data}=await sb.from('eventi').insert(ev).select().single();
+    if(data) await callGCal({type:'evento',...ev});
+  }
+  document.getElementById('modalEvent')?.remove();
+  editEvId=null;
+  await loadAll();
+}
+
+async function deleteEvent(id) {
+  if(!confirm('Eliminare questo evento?')) return;
+  await sb.from('eventi').delete().eq('id',id);
+  document.getElementById('modalEvent')?.remove();
+  editEvId=null;
+  await loadAll();
+}
+
+// ── ORDINI ──
+const STATO_ORDER={'Da Ordinare':0,'Ordinato/Attesa Consegna':1,'In Attesa Cliente':2,'Non Lo Trovo':3,'Avvisare':4,'Ordinato':5};
+const BADGE_O={'Da Ordinare':'badge-daordinare','Ordinato':'badge-ordinato','Ordinato/Attesa Consegna':'badge-attesa','In Attesa Cliente':'badge-attesa','Non Lo Trovo':'badge-nontrovo','Avvisare':'badge-avvisare'};
+
+function sortOrdini(arr) {
+  return [...arr].sort((a,b)=>{
+    const sd=(STATO_ORDER[a.stato]??5)-(STATO_ORDER[b.stato]??5);
+    return sd!==0?sd:(b.id||0)-(a.id||0);
+  });
+}
+
+function renderOrdini() {
+  const all=DB.ordini, mine=all.filter(o=>o.categoria===U.name);
+  if(oTab==='mine') {
+    return `<div class="tabs"><button class="tab active" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
+    ${sortOrdini(mine).length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine assegnato a te</div>`:sortOrdini(mine).map(o=>ordineCard(o)).join('')}`;
+  }
+  if(oFolder===null) {
+    return `<div class="tabs"><button class="tab" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
+    <div class="folder-item" onclick="oFolder='__all__';render()"><span class="folder-name">Tutti</span><span class="folder-badge" style="background:#555;">${all.length}</span></div>
+    ${OPS.map((op,i)=>{const ops=all.filter(o=>o.categoria===op);const daO=ops.filter(o=>o.stato==='Da Ordinare').length;if(!ops.length)return '';
+      return `<div class="folder-item" onclick="oFolder='${op}';render()" style="border-left:4px solid ${OP_COLORS[i]};">
+        <span class="folder-name">${op.toUpperCase()}</span>
+        <span class="folder-badge ${daO===0?'zero':''}" style="${daO>0?'background:'+OP_COLORS[i]:''}">${daO} da ordinare</span>
+      </div>`;}).join('')}`;
+  }
+  const filtered=sortOrdini(oFolder==='__all__'?all:all.filter(o=>o.categoria===oFolder));
+  return `<div class="tabs"><button class="tab" onclick="switchOTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchOTab('all')">TOTALI (${all.length})</button></div>
+  <button class="back-btn" onclick="oFolder=null;render()">← Indietro</button>
+  ${filtered.length===0?`<div class="empty"><div class="empty-icon">📦</div>Nessun ordine</div>`:filtered.map(o=>ordineCard(o)).join('')}`;
+}
+
+function switchOTab(t){oTab=t;oFolder=null;render();}
+
+function ordineCard(o) {
+  const bc=BADGE_O[o.stato]||'badge-daordinare', col=opColor(o.categoria);
+  return `<div class="card" style="border-left:3px solid ${col}">
+    <div class="card-header"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:${col};margin-bottom:2px;font-weight:600;">${esc(o.categoria||'')}</div><div class="card-title">${esc(o.cosa)}</div></div><span class="badge ${bc}">${o.stato}</span></div>
+    ${o.nome?`<div class="card-sub">👤 ${esc(o.nome)}</div>`:''}
+    ${o.costo?`<div class="card-sub">💶 €${o.costo}${o.acconto?` · Acc: €${o.acconto}`:''}</div>`:''}
+    ${o.arrivo?`<div class="card-sub">📅 ${o.arrivo}</div>`:''}
+    ${o.note?`<div class="card-sub">📝 ${esc(String(o.note).substring(0,55))}${String(o.note).length>55?'...':''}</div>`:''}
+    <div class="card-actions">
+      ${o.tel?`<button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button>`:''}
+      <button class="action-btn" onclick="editOrdine(${o.id})">✏️</button>
+      ${o.stato==='Ordinato'?`<button class="action-btn arch" onclick="archiviaOrdine(${o.id})">📁</button>`:''}
+      <button class="action-btn del" onclick="delOrdine(${o.id})">🗑️</button>
+    </div>
+  </div>`;
+}
+
+async function archiviaOrdine(id) {
+  const now=new Date().toISOString(), mk=monthKeyNow();
+  await sb.from('ordini').update({archiviato:now,mese_storico:mk}).eq('id',id);
+  await loadAll();
+}
+
+async function archiviaMultipli() {
+  const stati=['Ordinato','In Attesa Cliente','Non Lo Trovo','Avvisare'];
+  const da=DB.ordini.filter(o=>stati.includes(o.stato));
+  if(!da.length){alert('Nessun ordine da archiviare.');return;}
+  if(!confirm(`Archiviare ${da.length} ordini?`)) return;
+  const now=new Date().toISOString(), mk=monthKeyNow();
+  await sb.from('ordini').update({archiviato:now,mese_storico:mk}).in('id',da.map(o=>o.id));
+  await loadAll();
+}
+
+async function delOrdine(id) {
+  if(!confirm('Eliminare?')) return;
+  await sb.from('ordini').delete().eq('id',id);
+  await loadAll();
+}
+
+function editOrdine(id) {
+  const o=DB.ordini.find(x=>x.id===id);
+  if(!o) return;
+  editOId=id;
+  document.getElementById('o-stato').value=o.stato||'Da Ordinare';
+  document.getElementById('o-cosa').value=o.cosa||'';
+  document.getElementById('o-cat').value=o.categoria||OPS[0];
+  document.getElementById('o-nome').value=o.nome||'';
+  document.getElementById('o-tel').value=o.tel||'';
+  document.getElementById('o-costo').value=o.costo||'';
+  document.getElementById('o-acconto').value=o.acconto||'';
+  document.getElementById('o-arrivo').value=o.arrivo||'';
+  document.getElementById('o-note').value=o.note||'';
+  document.getElementById('modalOrdineTitle').textContent='Modifica Ordine';
+  document.getElementById('modalOrdine').classList.add('open');
+}
+
+function editOrdineStorico(id) {
+  const o=DB.storOrdini.find(x=>x.id===id);
+  if(!o) return;
+  editOId=id;
+  document.getElementById('o-stato').value=o.stato||'Ordinato';
+  document.getElementById('o-cosa').value=o.cosa||'';
+  document.getElementById('o-cat').value=o.categoria||OPS[0];
+  document.getElementById('o-nome').value=o.nome||'';
+  document.getElementById('o-tel').value=o.tel||'';
+  document.getElementById('o-costo').value=o.costo||'';
+  document.getElementById('o-acconto').value=o.acconto||'';
+  document.getElementById('o-arrivo').value=o.arrivo||'';
+  document.getElementById('o-note').value=o.note||'';
+  document.getElementById('modalOrdineTitle').textContent='Modifica Ordine (Storico)';
+  document.getElementById('modalOrdine').classList.add('open');
+}
+
+async function saveOrdine() {
+  const cosa=document.getElementById('o-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa ordinare');return;}
+  const stato=document.getElementById('o-stato').value;
+  const archiviaNow = stato==='Ordinato';
+  const obj={
+    stato,cosa,
+    categoria:document.getElementById('o-cat').value,
+    nome:document.getElementById('o-nome').value,
+    tel:document.getElementById('o-tel').value,
+    costo:document.getElementById('o-costo').value||null,
+    acconto:document.getElementById('o-acconto').value||null,
+    arrivo:document.getElementById('o-arrivo').value||null,
+    note:document.getElementById('o-note').value,
+    created_by:U.name,
+    archiviato:archiviaNow?new Date().toISOString():null,
+    mese_storico:archiviaNow?monthKeyNow():null
+  };
+  if(editOId){
+    await sb.from('ordini').update(obj).eq('id',editOId);
+  } else {
+    const {data}=await sb.from('ordini').insert(obj).select().single();
+    if(data?.arrivo) await callGCal({type:'ordine',cosa:obj.cosa,arrivo:obj.arrivo,nome:obj.nome,categoria:obj.categoria});
+  }
+  closeModal('modalOrdine'); editOId=null; await loadAll();
+}
+
+// ── TASK ──
+const faseBadge = f => ({'Da Fare':'badge-dafare','Potenziale Cliente':'badge-potenziale','Contattare':'badge-contattare','Fatto':'badge-chiuso','Chiuso':'badge-chiuso','Urgente':'badge-urgente'}[f]||'badge-dafare');
+
+async function saveTask() {
+  const cosa=document.getElementById('t-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa fare');return;}
+  const fase=document.getElementById('t-fase').value;
+  const archiviaNow = fase==='Fatto';
+  const obj={
+    cosa, fase:archiviaNow?'Chiuso':fase,
+    lavoratore:document.getElementById('t-lav').value,
+    nome:document.getElementById('t-nome').value,
+    tel:document.getElementById('t-tel').value,
+    euro:document.getElementById('t-euro').value||null,
+    note:document.getElementById('t-note').value,
+    created_by:U.name,
+    archiviato:archiviaNow?new Date().toISOString():null,
+    mese_storico:archiviaNow?monthKeyNow():null
+  };
+  if(editTId){await sb.from('task').update(obj).eq('id',editTId);}
+  else{await sb.from('task').insert(obj);}
+  closeModal('modalTask'); editTId=null; await loadAll();
+}
+
+function renderTask() {
+  const allActive=DB.task, mine=allActive.filter(t=>t.lavoratore===U.name);
+  if(tTab==='mine') {
+    return `<div class="tabs"><button class="tab active" onclick="switchTTab('mine')">I MIEI (${mine.length})</button><button class="tab" onclick="switchTTab('all')">TOTALI (${allActive.length})</button></div>
+    ${mine.length===0?`<div class="empty"><div class="empty-icon">✅</div>Nessun task assegnato a te</div>`:mine.map(t=>taskCard(t)).join('')}`;
+  }
+  if(tFolder===null) {
+    return `<div class="tabs"><button class="tab" onclick="switchTTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchTTab('all')">TOTALI (${allActive.length})</button></div>
+    <div class="folder-item" onclick="tFolder='__all__';render()"><span class="folder-name">Tutti</span><span class="folder-badge" style="background:#555;">${allActive.length}</span></div>
+    ${OPS.map((op,i)=>{const ops=allActive.filter(t=>t.lavoratore===op);const urg=ops.filter(t=>t.fase==='Urgente').length;if(!ops.length)return '';
+      return `<div class="folder-item" onclick="tFolder='${op}';render()" style="border-left:4px solid ${OP_COLORS[i]};">
+        <span class="folder-name">${op.toUpperCase()}</span>
+        <span class="folder-badge ${urg===0?'zero':''}" style="${urg>0?'background:'+OP_COLORS[i]:''}">${urg>0?`🔴 ${urg} urgenti`:ops.length+' task'}</span>
+      </div>`;}).join('')}`;
+  }
+  const filtered=(tFolder==='__all__'?allActive:allActive.filter(t=>t.lavoratore===tFolder));
+  return `<div class="tabs"><button class="tab" onclick="switchTTab('mine')">I MIEI (${mine.length})</button><button class="tab active" onclick="switchTTab('all')">TOTALI (${allActive.length})</button></div>
+  <button class="back-btn" onclick="tFolder=null;render()">← Indietro</button>
+  ${filtered.length===0?`<div class="empty"><div class="empty-icon">✅</div>Nessun task</div>`:filtered.map(t=>taskCard(t)).join('')}`;
+}
+
+function switchTTab(t){tTab=t;tFolder=null;render();}
+
+function taskCard(t) {
+  const col=opColor(t.lavoratore);
+  return `<div class="card" style="border-left:3px solid ${col}">
+    <div class="card-header"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:${col};margin-bottom:2px;font-weight:600;">${esc(t.lavoratore||'')}</div><div class="card-title">${esc(t.cosa)}</div></div><span class="badge ${faseBadge(t.fase)}">${t.fase}</span></div>
+    ${t.nome?`<div class="card-sub">👤 ${esc(t.nome)}</div>`:''}
+    ${t.euro?`<div class="card-sub">💶 €${t.euro}</div>`:''}
+    ${t.note?`<div class="card-sub">📝 ${esc(String(t.note).substring(0,55))}${String(t.note).length>55?'...':''}</div>`:''}
+    <div class="card-actions">
+      ${t.tel?`<button class="action-btn call" onclick="callTel('${t.tel}')">📞</button><button class="action-btn wa" onclick="wa('${t.tel}')">💬</button>`:''}
+      <button class="action-btn arch" onclick="closeTask(${t.id})" title="Chiudi">✅</button>
+      <button class="action-btn" onclick="editTask(${t.id})">✏️</button>
+      <button class="action-btn del" onclick="delTask(${t.id})">🗑️</button>
+    </div>
+  </div>`;
+}
+
+async function closeTask(id) {
+  const now=new Date().toISOString(), mk=monthKeyNow();
+  await sb.from('task').update({fase:'Chiuso',archiviato:now,mese_storico:mk}).eq('id',id);
+  await loadAll();
+}
+
+async function delTask(id) {
+  if(!confirm('Eliminare?')) return;
+  await sb.from('task').delete().eq('id',id);
+  await loadAll();
+}
+
+function editTask(id) {
+  const t=DB.task.find(x=>x.id===id);
+  if(!t) return;
+  editTId=id;
+  document.getElementById('t-cosa').value=t.cosa||'';
+  document.getElementById('t-fase').value=t.fase||'Da Fare';
+  document.getElementById('t-lav').value=t.lavoratore||OPS[0];
+  document.getElementById('t-nome').value=t.nome||'';
+  document.getElementById('t-tel').value=t.tel||'';
+  document.getElementById('t-euro').value=t.euro||'';
+  document.getElementById('t-note').value=t.note||'';
+  document.getElementById('modalTaskTitle').textContent='Modifica Task';
+  document.getElementById('modalTask').classList.add('open');
+}
+
+async function saveTask() {
+  const cosa=document.getElementById('t-cosa').value.trim();
+  if(!cosa){alert('Inserisci cosa fare');return;}
+  const obj={cosa,fase:document.getElementById('t-fase').value,lavoratore:document.getElementById('t-lav').value,nome:document.getElementById('t-nome').value,tel:document.getElementById('t-tel').value,euro:document.getElementById('t-euro').value||null,note:document.getElementById('t-note').value,created_by:U.name};
+  if(editTId){await sb.from('task').update(obj).eq('id',editTId);}
+  else{await sb.from('task').insert(obj);}
+  closeModal('modalTask'); editTId=null; await loadAll();
+}
+
+// ── STORICO ──
+function getAvailableMonths(items) {
+  const mks=new Set(items.map(i=>i.mese_storico||monthKey(i.archiviato||i.created_at||'')));
+  return Array.from(mks).sort((a,b)=>b.localeCompare(a));
+}
+
+function renderStorico() {
+  const storO=DB.storOrdini, storT=DB.storTask;
+  const items=storicoType==='ordini'?storO:storT;
+  const opKey=storicoType==='ordini'?'categoria':'lavoratore';
+  const selMonth=localStorage.getItem('pt_stor_month')||'all';
+  let html=`<div class="sec-title" style="margin-bottom:12px;">📚 Storico</div>
+  <div class="storico-actions">
+    <button class="storico-btn ${storicoType==='ordini'?'active':''}" onclick="storicoType='ordini';render()">📦 Ordini (${storO.length})</button>
+    <button class="storico-btn ${storicoType==='task'?'active':''}" onclick="storicoType='task';render()">☑️ Task (${storT.length})</button>
+  </div>
+  <div class="export-section">
+    <h3>📥 Esporta dati</h3>
+    <div class="export-row"><span class="export-label">📊 Excel</span><button class="export-btn" onclick="exportExcel()">Scarica .xlsx</button></div>
+    <div style="border-top:1px solid var(--border);margin:10px 0;"></div>
+    <div style="margin-bottom:8px;font-size:12px;color:var(--sub);">📇 Contatti (.vcf):</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <select class="month-select" id="vcfMonth" onchange="localStorage.setItem('pt_stor_month',this.value)">
+        <option value="all">Tutti i mesi</option>
+        ${getAvailableMonths([...storO,...storT]).map(mk=>`<option value="${mk}" ${selMonth===mk?'selected':''}>${monthLabel(mk)}</option>`).join('')}
+      </select>
+      <button class="export-btn" onclick="exportVCF()">Scarica .vcf</button>
+    </div>
+  </div>`;
+  if(!items.length) return html+`<div class="empty"><div class="empty-icon">📭</div>Nessun elemento archiviato.</div>`;
+  OPS.forEach((op,idx)=>{
+    const opItems=items.filter(i=>i[opKey]===op);
+    if(!opItems.length) return;
+    const col=OP_COLORS[idx], isOpen=storOpenFolders[op]!==false;
+    const byMonth={};
+    opItems.forEach(item=>{const mk=item.mese_storico||monthKey(item.archiviato||item.created_at||'');if(!byMonth[mk])byMonth[mk]=[];byMonth[mk].push(item);});
+    const sortedMonths=Object.keys(byMonth).sort((a,b)=>b.localeCompare(a));
+    html+=`<div class="stor-folder" style="border-left:4px solid ${col};">
+      <div class="stor-folder-header" onclick="storOpenFolders['${op}']=storOpenFolders['${op}']===false?true:false;render()">
+        <div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:${col};flex-shrink:0;"></div><span style="font-weight:700;font-size:14px;">${op.toUpperCase()}</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;background:${col}22;color:${col};border-radius:20px;padding:2px 10px;font-weight:700;">${opItems.length}</span><span style="color:var(--sub);font-size:12px;">${isOpen?'▲':'▼'}</span></div>
+      </div>`;
+    if(isOpen){
+      html+=`<div style="padding:0 12px 12px;">`;
+      sortedMonths.forEach(mk=>{
+        const mItems=byMonth[mk], mKey=op+'_'+mk, mOpen=storOpenMonths[mKey]!==false;
+        html+=`<div class="month-header" onclick="storOpenMonths['${mKey}']=storOpenMonths['${mKey}']===false?true:false;render()"><span>${monthLabel(mk)}</span><span style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;background:var(--bg2);border-radius:20px;padding:2px 7px;">${mItems.length}</span><span>${mOpen?'▲':'▼'}</span></span></div>`;
+        if(mOpen){
+          html+=mItems.map(item=>{
+            const isOrdine=storicoType==='ordini';
+            const bc=isOrdine?(BADGE_O[item.stato]||'badge-ordinato'):'badge-chiuso';
+            return `<div class="card" style="margin-bottom:7px;">
+              <div class="card-header"><div style="flex:1;min-width:0;"><div class="card-title">${esc(item.cosa)}</div></div><span class="badge ${bc}">${isOrdine?item.stato:'Chiuso'}</span></div>
+              ${item.nome?`<div class="card-sub">👤 ${esc(item.nome)}</div>`:''}
+              ${isOrdine&&item.costo?`<div class="card-sub">💶 €${item.costo}${item.acconto?` · Acc: €${item.acconto}`:''}</div>`:''}
+              ${!isOrdine&&item.euro?`<div class="card-sub">💶 €${item.euro}</div>`:''}
+              ${item.note?`<div class="card-sub">📝 ${esc(String(item.note).substring(0,55))}</div>`:''}
+              <div class="card-actions">
+                ${item.tel?`<button class="action-btn call" onclick="callTel('${item.tel}')">📞</button><button class="action-btn wa" onclick="wa('${item.tel}')">💬</button>`:''}
+                ${isOrdine?`<button class="action-btn" onclick="editOrdineStorico(${item.id})">✏️</button>`:''}
+              </div>
+            </div>`;
+          }).join('');
+        }
+      });
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  return html;
+}
+
+// ── EXPORT ──
+async function exportExcel() {
+  setSync('⟳ export...');
+  const [resO, resT] = await Promise.all([
+    sb.from('ordini').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
+    sb.from('task').select('*').not('archiviato','is',null).order('archiviato',{ascending:false}),
+  ]);
+  const storO=resO.data||[], storT=resT.data||[];
+  setSync('✓ sincronizzato');
+  if(!storO.length&&!storT.length){alert('Nessun dato nello storico.');return;}
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.json_to_sheet(storO.map(o=>({'Mese':o.mese_storico||'','Operatore':o.categoria||'','Ordine':o.cosa||'','Stato':o.stato||'','Cliente':o.nome||'','Telefono':o.tel||'','Costo (€)':o.costo||0,'Acconto (€)':o.acconto||0,'Arrivo Stimato':o.arrivo||'','Note':o.note||'','Archiviato il':o.archiviato?new Date(o.archiviato).toLocaleDateString('it-IT'):''})));
+  XLSX.utils.book_append_sheet(wb,ws1,'Ordini Archiviati');
+  const ws2=XLSX.utils.json_to_sheet(storT.map(t=>({'Mese':t.mese_storico||'','Lavoratore':t.lavoratore||'','Task':t.cosa||'','Cliente':t.nome||'','Telefono':t.tel||'','Euro (€)':t.euro||0,'Note':t.note||'','Chiuso il':t.archiviato?new Date(t.archiviato).toLocaleDateString('it-IT'):''})));
+  XLSX.utils.book_append_sheet(wb,ws2,'Task Chiusi');
+  XLSX.writeFile(wb,`Paotech_Storico_${monthKeyNow()}.xlsx`);
+}
+
+function exportVCF() {
+  const selMonth=document.getElementById('vcfMonth')?.value||'all';
+  const all=[...DB.storOrdini,...DB.storTask];
+  const filtered=selMonth==='all'?all:all.filter(i=>(i.mese_storico||monthKey(i.archiviato||i.created_at||''))===selMonth);
+  const seen=new Set();
+  const unique=filtered.filter(i=>i.nome&&i.tel).filter(i=>{const t=i.tel.replace(/\D/g,'');if(seen.has(t))return false;seen.add(t);return true;});
+  if(!unique.length){alert('Nessun contatto con nome e telefono.');return;}
+  const vcf=unique.map(i=>{const parts=i.nome.trim().split(' ');return `BEGIN:VCARD\nVERSION:3.0\nN:${parts.slice(1).join(' ')};${parts[0]};;;\nFN:${i.nome.trim()}\nTEL;TYPE=CELL:+39${i.tel.replace(/\D/g,'')}\nNOTE:Paotech - ${i.cosa||''}\nEND:VCARD`;}).join('\n');
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([vcf],{type:'text/vcard'})),download:`Paotech_Contatti_${selMonth}.vcf`});
+  a.click();
+}
+
+// ── FAB / MODAL ──
+function openModal() {
+  editOId=null; editTId=null;
+  document.getElementById('modalFabMenu')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="modalFabMenu">
+    <div class="modal" style="padding-bottom:28px;">
+      <div class="modal-header"><div class="modal-title">Cosa vuoi creare?</div><button class="close-btn" onclick="document.getElementById('modalFabMenu').remove()">✕</button></div>
+      <button class="save-btn" style="background:var(--c-ap);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openEventModal()">📅 Nuovo Evento</button>
+      <button class="save-btn" style="background:var(--c-gv);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewOrdine()">📦 Nuovo Ordine</button>
+      <button class="save-btn" style="background:var(--c-gd);margin-bottom:10px;" onclick="document.getElementById('modalFabMenu').remove();openNewTask()">☑️ Nuovo Task</button>
+      <button class="save-btn" style="background:#555;" onclick="document.getElementById('modalFabMenu').remove();openSearch()">🔍 Cerca</button>
+    </div>
+  </div>`);
+  document.getElementById('modalFabMenu').addEventListener('click',function(e){if(e.target===this)this.remove();});
+}
+
+function openNewOrdine() {
+  ['o-cosa','o-nome','o-tel','o-costo','o-acconto','o-arrivo','o-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('o-stato').value='Da Ordinare';
+  document.getElementById('o-cat').value=U.name;
+  document.getElementById('modalOrdineTitle').textContent='Nuovo Ordine';
+  document.getElementById('modalOrdine').classList.add('open');
+}
+
+function openNewTask() {
+  ['t-cosa','t-nome','t-tel','t-euro','t-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('t-fase').value='Da Fare';
+  document.getElementById('t-lav').value=U.name;
+  document.getElementById('modalTaskTitle').textContent='Nuovo Task';
+  document.getElementById('modalTask').classList.add('open');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+// ── AUTO LOGIN ──
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('pt_autologin');
+  if(saved && OPS.includes(saved)){
+    const idx = OPS.indexOf(saved);
+    U = {name:saved, initials:OP_INITIALS[idx], idx, color:OP_COLORS[idx]};
+    startApp();
+  }
+});
+</script>
+</body>
+</html>
