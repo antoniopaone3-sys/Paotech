@@ -170,14 +170,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 <button class="fab" id="fab" onclick="openModal()" style="display:none">+</button>
 
-<div class="search-overlay" id="searchOverlay">
-  <div class="search-bar">
-    <input class="search-input" id="searchInput" type="text" placeholder="Cerca ordini, task, clienti..." oninput="doSearch(this.value)">
-    <button class="search-close" onclick="closeSearch()">✕</button>
-  </div>
-  <div class="search-results" id="searchResults"></div>
-</div>
-
 <div class="modal-overlay" id="modalOrdine">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="modalOrdineTitle">Nuovo Ordine</div><button class="close-btn" onclick="closeModal('modalOrdine')">✕</button></div>
