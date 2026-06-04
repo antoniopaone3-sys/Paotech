@@ -852,12 +852,14 @@ function inviaPromemoria(id) {
   const o=DB.ordini.find(x=>x.id===id)||DB.storOrdini.find(x=>x.id===id);
   if(!o){alert('Ordine non trovato.');return;}
   if(!o.tel){alert('Nessun numero di telefono.');return;}
-  let msg=`Ciao ${o.nome||''}! 👋\n\nAbbiamo registrato il tuo ordine presso *PAOTECH Repair Center* 📦\n\n`;
-  msg+=`📌 *Articolo:* ${o.cosa}\n`;
-  if(o.costo) msg+=`💶 *Costo:* €${o.costo}\n`;
-  if(o.acconto) msg+=`✅ *Acconto versato:* €${o.acconto}\n`;
-  if(o.arrivo) msg+=`📅 *Arrivo stimato:* ${o.arrivo}\n`;
-  msg+=`\nPer qualsiasi informazione siamo sempre disponibili! 😊\n*PAOTECH Repair Center*`;
+  const parts=U.name.split(' ');
+  const operatoreBreve=parts[0]+' '+parts[parts.length-1].charAt(0)+'.';
+  let msg=`Ciao ${o.nome||''},\nsono ${operatoreBreve} e ti scrivo da PAOTECH Repair Center.\n\nAbbiamo registrato il tuo ordine:\n\n`;
+  msg+=`- Articolo: ${o.cosa}\n`;
+  if(o.costo) msg+=`- Costo: euro ${o.costo}\n`;
+  if(o.acconto) msg+=`- Acconto versato: euro ${o.acconto}\n`;
+  if(o.arrivo) msg+=`- Arrivo stimato: ${o.arrivo}\n`;
+  msg+=`\nTi aggiorneremo non appena il tuo ordine sara' disponibile.\nPer qualsiasi informazione non esitare a contattarci, siamo sempre disponibili.\n\nGrazie per la tua fiducia!\nPAOTECH Repair Center`;
   window.open(`https://wa.me/39${o.tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
 }
 
