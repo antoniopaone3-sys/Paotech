@@ -231,6 +231,13 @@ const monthKey = s => s ? s.substring(0,7) : monthKeyNow();
 const monthLabel = mk => { const[y,m]=mk.split('-'); return `${MONTHS[parseInt(m)-1]} ${y}`; };
 const opColor = name => { const i=OPS.indexOf(name); return i>=0?OP_COLORS[i]:'#666'; };
 const wa = tel => window.open(`https://wa.me/39${tel.replace(/\D/g,'')}`);
+
+function waMontaggio(tel, nome) {
+  const parts=U?U.name.split(' '):[''];
+  const operatoreBreve=U?(parts[0]+' '+parts[parts.length-1].charAt(0)+'.'):'';
+  const msg=`Gentile ${nome||'cliente'},\nsono ${operatoreBreve} di PAOTECH Repair Center.\n\nSiamo lieti di comunicarle che il ricambio da lei ordinato e' arrivato e siamo pronti per procedere con il montaggio.\n\nQuando sarebbe disponibile a passare da noi? Se lo desidera, potremmo fissare un appuntamento per domani mattina, impieghiamo circa 2-3 ore per il montaggio.\n\nVa bene per lei?\n\nLa aspettiamo presto!\nPAOTECH Repair Center`;
+  window.open(`https://wa.me/39${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
+}
 const callTel = tel => { window.location.href=`tel:+39${tel.replace(/\D/g,'')}`; };
 const setSync = (msg,err=false) => { const el=document.getElementById('syncIndicator'); if(el){el.textContent=msg;el.style.color=err?'#ff4444':'#4caf50';} };
 
@@ -524,7 +531,7 @@ function ordineCard(o) {
     ${o.arrivo?`<div class="card-sub">📅 ${o.arrivo}</div>`:''}
     ${o.note?`<div class="card-sub">📝 ${esc(String(o.note).substring(0,55))}${String(o.note).length>55?'...':''}</div>`:''}
     <div class="card-actions">
-      ${o.tel?`<button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button><button class="action-btn" style="color:#25D366;" onclick="inviaPromemoria(${o.id})">📲</button>`:''}
+      ${o.tel?`<button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="waMontaggio('${o.tel}','${esc(o.nome||'')}')">💬</button><button class="action-btn" style="color:#25D366;" onclick="inviaPromemoria(${o.id})">📲</button>`:''}
       <button class="action-btn" onclick="editOrdine(${o.id})">✏️</button>
       ${o.stato==='Ordinato'?`<button class="action-btn arch" onclick="archiviaOrdine(${o.id})">📁</button>`:''}
       <button class="action-btn del" onclick="delOrdine(${o.id})">🗑️</button>
@@ -670,7 +677,7 @@ function taskCard(t) {
     ${t.euro?`<div class="card-sub">💶 €${t.euro}</div>`:''}
     ${t.note?`<div class="card-sub">📝 ${esc(String(t.note).substring(0,55))}${String(t.note).length>55?'...':''}</div>`:''}
     <div class="card-actions">
-      ${t.tel?`<button class="action-btn call" onclick="callTel('${t.tel}')">📞</button><button class="action-btn wa" onclick="wa('${t.tel}')">💬</button>`:''}
+      ${t.tel?`<button class="action-btn call" onclick="callTel('${t.tel}')">📞</button><button class="action-btn wa" onclick="waMontaggio('${t.tel}','${esc(t.nome||'')}')">💬</button>`:''}
       <button class="action-btn arch" onclick="closeTask(${t.id})" title="Chiudi">✅</button>
       <button class="action-btn" onclick="editTask(${t.id})">✏️</button>
       <button class="action-btn del" onclick="delTask(${t.id})">🗑️</button>
