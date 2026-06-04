@@ -524,12 +524,11 @@ function ordineCard(o) {
     ${o.arrivo?`<div class="card-sub">📅 ${o.arrivo}</div>`:''}
     ${o.note?`<div class="card-sub">📝 ${esc(String(o.note).substring(0,55))}${String(o.note).length>55?'...':''}</div>`:''}
     <div class="card-actions">
-      ${o.tel?`<button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button>`:''}
+      ${o.tel?`<button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button><button class="action-btn" style="color:#25D366;" onclick="inviaPromemoria(${o.id})">📲</button>`:''}
       <button class="action-btn" onclick="editOrdine(${o.id})">✏️</button>
       ${o.stato==='Ordinato'?`<button class="action-btn arch" onclick="archiviaOrdine(${o.id})">📁</button>`:''}
       <button class="action-btn del" onclick="delOrdine(${o.id})">🗑️</button>
     </div>
-    ${o.tel?`<button onclick='inviaPromemoria(${JSON.stringify(o).replace(/'/g,"&#39;")})' style="width:100%;background:#25D366;border:none;color:#fff;padding:9px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;">📲 Invia promemoria WA</button>`:''}
   </div>`;
 }
 
