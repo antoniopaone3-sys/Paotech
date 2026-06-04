@@ -529,6 +529,7 @@ function ordineCard(o) {
       ${o.stato==='Ordinato'?`<button class="action-btn arch" onclick="archiviaOrdine(${o.id})">📁</button>`:''}
       <button class="action-btn del" onclick="delOrdine(${o.id})">🗑️</button>
     </div>
+    ${o.tel?`<button onclick='inviaPromemoria(${JSON.stringify(o).replace(/'/g,"&#39;")})' style="width:100%;background:#25D366;border:none;color:#fff;padding:9px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;">📲 Invia promemoria WA</button>`:''}
   </div>`;
 }
 
