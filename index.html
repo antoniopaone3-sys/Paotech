@@ -848,6 +848,80 @@ function openNewTask() {
   document.getElementById('modalTask').classList.add('open');
 }
 
+function inviaPromemoria(id) {
+  const o=DB.ordini.find(x=>x.id===id)||DB.storOrdini.find(x=>x.id===id);
+  if(!o){alert('Ordine non trovato.');return;}
+  if(!o.tel){alert('Nessun numero di telefono.');return;}
+  let msg=`Ciao ${o.nome||''}! 👋\n\nAbbiamo registrato il tuo ordine presso *PAOTECH Repair Center* 📦\n\n`;
+  msg+=`📌 *Articolo:* ${o.cosa}\n`;
+  if(o.costo) msg+=`💶 *Costo:* €${o.costo}\n`;
+  if(o.acconto) msg+=`✅ *Acconto versato:* €${o.acconto}\n`;
+  if(o.arrivo) msg+=`📅 *Arrivo stimato:* ${o.arrivo}\n`;
+  msg+=`\nPer qualsiasi informazione siamo sempre disponibili! 😊\n*PAOTECH Repair Center*`;
+  window.open(`https://wa.me/39${o.tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
+}
+
+function openSearch() {
+  document.getElementById('searchOverlay')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;flex-direction:column;padding:16px;" id="searchOverlay">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+      <input id="searchInput" type="text" placeholder="Cerca ordini, task, clienti..." style="flex:1;background:#2e2e2e;border:1px solid #3a3a3a;border-radius:12px;padding:13px;color:#fff;font-size:15px;" oninput="doSearch(this.value)">
+      <button onclick="document.getElementById('searchOverlay').remove()" style="background:#2e2e2e;border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;flex-shrink:0;">✕</button>
+    </div>
+    <div id="searchResults" style="flex:1;overflow-y:auto;"><div style="text-align:center;color:#aaa;padding:40px 0;font-size:14px;">Inizia a scrivere per cercare...</div></div>
+  </div>`);
+  setTimeout(()=>document.getElementById('searchInput')?.focus(),100);
+}
+
+function doSearch(q) {
+  const res=document.getElementById('searchResults');
+  if(!q||q.length<2){res.innerHTML='<div style="text-align:center;color:#aaa;padding:40px 0;font-size:14px;">Inizia a scrivere per cercare...</div>';return;}
+  const ql=q.toLowerCase();
+  const match=item=>(item.cosa||'').toLowerCase().includes(ql)||(item.nome||'').toLowerCase().includes(ql)||(item.tel||'').toLowerCase().includes(ql)||(item.note||'').toLowerCase().includes(ql);
+  const ordiniAttivi=DB.ordini.filter(match);
+  const ordiniStor=DB.storOrdini.filter(match);
+  const taskAttivi=DB.task.filter(match);
+  const taskStor=DB.storTask.filter(match);
+  const tot=ordiniAttivi.length+ordiniStor.length+taskAttivi.length+taskStor.length;
+  if(!tot){res.innerHTML='<div style="text-align:center;color:#aaa;padding:40px 0;font-size:14px;">Nessun risultato trovato</div>';return;}
+  let html='';
+  if(ordiniAttivi.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;margin:12px 0 6px;">📦 Ordini attivi (${ordiniAttivi.length})</div>`;
+    html+=ordiniAttivi.map(o=>`<div class="card" style="border-left:3px solid ${opColor(o.categoria)};margin-bottom:7px;">
+      <div style="font-size:11px;color:${opColor(o.categoria)};font-weight:600;">${esc(o.categoria)}</div>
+      <div style="font-weight:600;font-size:14px;">${esc(o.cosa)}</div>
+      ${o.nome?`<div style="font-size:12px;color:#aaa;">👤 ${esc(o.nome)}</div>`:''}
+      ${o.tel?`<div style="display:flex;gap:6px;margin-top:6px;"><button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button></div>`:''}
+    </div>`).join('');
+  }
+  if(taskAttivi.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;margin:12px 0 6px;">☑️ Task attivi (${taskAttivi.length})</div>`;
+    html+=taskAttivi.map(t=>`<div class="card" style="border-left:3px solid ${opColor(t.lavoratore)};margin-bottom:7px;">
+      <div style="font-size:11px;color:${opColor(t.lavoratore)};font-weight:600;">${esc(t.lavoratore)}</div>
+      <div style="font-weight:600;font-size:14px;">${esc(t.cosa)}</div>
+      ${t.nome?`<div style="font-size:12px;color:#aaa;">👤 ${esc(t.nome)}</div>`:''}
+      ${t.tel?`<div style="display:flex;gap:6px;margin-top:6px;"><button class="action-btn call" onclick="callTel('${t.tel}')">📞</button><button class="action-btn wa" onclick="wa('${t.tel}')">💬</button></div>`:''}
+    </div>`).join('');
+  }
+  if(ordiniStor.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;margin:12px 0 6px;">📚 Storico ordini (${ordiniStor.length})</div>`;
+    html+=ordiniStor.map(o=>`<div class="card" style="margin-bottom:7px;">
+      <div style="font-weight:600;font-size:14px;">${esc(o.cosa)}</div>
+      ${o.nome?`<div style="font-size:12px;color:#aaa;">👤 ${esc(o.nome)}</div>`:''}
+      ${o.tel?`<div style="display:flex;gap:6px;margin-top:6px;"><button class="action-btn call" onclick="callTel('${o.tel}')">📞</button><button class="action-btn wa" onclick="wa('${o.tel}')">💬</button></div>`:''}
+    </div>`).join('');
+  }
+  if(taskStor.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;margin:12px 0 6px;">📚 Storico task (${taskStor.length})</div>`;
+    html+=taskStor.map(t=>`<div class="card" style="margin-bottom:7px;">
+      <div style="font-weight:600;font-size:14px;">${esc(t.cosa)}</div>
+      ${t.nome?`<div style="font-size:12px;color:#aaa;">👤 ${esc(t.nome)}</div>`:''}
+      ${t.tel?`<div style="display:flex;gap:6px;margin-top:6px;"><button class="action-btn call" onclick="callTel('${t.tel}')">📞</button><button class="action-btn wa" onclick="wa('${t.tel}')">💬</button></div>`:''}
+    </div>`).join('');
+  }
+  res.innerHTML=html;
+}
+
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 document.querySelectorAll('.modal-overlay').forEach(el=>{
